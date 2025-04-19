@@ -21,7 +21,7 @@ int FWinEngine::PreInit()
 	const char LogPath[] = "../log";
 	init_log_system(LogPath);
 
-	return 0;
+	return 1;
 }
 
 int FWinEngine::Init(FWinMainCommandParameters Parameters)
@@ -35,7 +35,8 @@ int FWinEngine::Init(FWinMainCommandParameters Parameters)
 	{
 		return -1;
 	}
-	return 0;
+
+	return 1;
 }
 
 int FWinEngine::PostInit()
@@ -117,7 +118,7 @@ int FWinEngine::PostInit()
 	ID3D12CommandList* CommandLists[] = { CommandList.Get() };
 	CommandQueue->ExecuteCommandLists(_countof(CommandLists), CommandLists);
 
-	return 0;
+	return 1;
 }
 
 void FWinEngine::Tick()
@@ -126,17 +127,17 @@ void FWinEngine::Tick()
 
 int FWinEngine::PreExit()
 {
-	return 0;
+	return 1;
 }
 
 int FWinEngine::Exit()
 {
-	return 0;
+	return 1;
 }
 
 int FWinEngine::PostExit()
 {
-	return 0;
+	return 1;
 }
 
 int FWinEngine::InitWindows(FWinMainCommandParameters Parameters)

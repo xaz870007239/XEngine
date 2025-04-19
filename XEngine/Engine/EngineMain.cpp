@@ -18,7 +18,7 @@ int Init(FEngine* InEngine
 	FWinMainCommandParameters Parameters{ hInstance, prevInstance, cmdLine, showCmd };
 
 	Result = InEngine->PreInit();
-	if (Result < 0)
+	if (!Result)
 	{
 		return Result;
 	}
@@ -28,13 +28,13 @@ int Init(FEngine* InEngine
 		Parameters
 #endif
 	);
-	if (Result < 0)
+	if (!Result)
 	{
 		return Result;
 	}
 
 	Result = InEngine->PostInit();
-	if (Result < 0)
+	if (!Result)
 	{
 		return Result;
 	}
@@ -59,19 +59,19 @@ int Exit(FEngine* InEngine)
 	}
 
 	Result = InEngine->PreExit();
-	if (Result < 0)
+	if (!Result)
 	{
 		return Result;
 	}
 
 	Result = InEngine->Exit();
-	if (Result < 0)
+	if (!Result)
 	{
 		return Result;
 	}
 
 	Result = InEngine->PostExit();
-	if (Result < 0)
+	if (!Result)
 	{
 		return Result;
 	}
