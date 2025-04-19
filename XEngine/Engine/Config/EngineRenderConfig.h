@@ -11,6 +11,7 @@ public:
 	int BuffCount;
 
 	static FEngineRenderConfig* Get();
+	static void Destroy();
 
 private:
 

@@ -20,3 +20,12 @@ FEngineRenderConfig* FEngineRenderConfig::Get()
 
 	return Instance;
 }
+
+void FEngineRenderConfig::Destroy()
+{
+	if (Instance)
+	{
+		delete Instance;
+		Instance = nullptr;
+	}
+}

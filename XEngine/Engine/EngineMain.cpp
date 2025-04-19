@@ -15,17 +15,19 @@ int Init(FEngine* InEngine
 		return -1;
 	}
 
-	Result = InEngine->PreInit(
-#if defined(_WIN32) || defined(_WIN64)
-		{hInstance, prevInstance, cmdLine, showCmd}
-#endif
-	);
+	FWinMainCommandParameters Parameters{ hInstance, prevInstance, cmdLine, showCmd };
+
+	Result = InEngine->PreInit();
 	if (Result < 0)
 	{
 		return Result;
 	}
 
-	Result = InEngine->Init();
+	Result = InEngine->Init(
+#if defined(_WIN32) || defined(_WIN64)
+		Parameters
+#endif
+	);
 	if (Result < 0)
 	{
 		return Result;
