@@ -377,5 +377,8 @@
     <ClInclude Include="Engine\Rendering\DirectX12\d3dx12.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\XDebug\Log\EngineLog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

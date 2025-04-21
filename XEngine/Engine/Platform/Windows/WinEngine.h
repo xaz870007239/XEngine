@@ -13,13 +13,17 @@ public:
 	int PreInit() override;
 	int Init(FWinMainCommandParameters Parameters) override;
 	int PostInit() override;
-	void Tick() override;
+	void Tick(float DeltaTime) override;
 	int PreExit() override;
 	int Exit() override;
 	int PostExit() override;
 
 	int InitWindows(FWinMainCommandParameters Parameters);
 	int InitDirectX3D();
+
+	ID3D12Resource* GetCurrentSwapBuffer();
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentSwapBufferView();
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentDepthStencilView();
 
 private:
 
@@ -39,8 +43,9 @@ private:
 	vector<ComPtr<ID3D12Resource>> SwapChainBuffer;
 	ComPtr<ID3D12Resource> DepthStencilBuffer;
 
-
 protected:
+
+	int CurrentSwapBufferIdx;
 
 	HWND WindowHandle;
 	UINT M4XQualityLevel;
@@ -49,4 +54,5 @@ protected:
 
 	DXGI_FORMAT BufferFormat;
 	DXGI_FORMAT DepthStencilFormat;
+
 };

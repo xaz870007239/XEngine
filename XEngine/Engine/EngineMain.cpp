@@ -46,7 +46,9 @@ void Tick(FEngine* InEngine)
 {
 	if (InEngine)
 	{
-		InEngine->Tick();
+		float Timer = 0.03f;
+		InEngine->Tick(Timer);
+		Sleep(30);
 	}
 }
 

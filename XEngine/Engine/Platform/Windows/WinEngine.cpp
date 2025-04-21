@@ -5,6 +5,7 @@
 #include "WindowsMessageProcessing.h"
 
 FWinEngine::FWinEngine() :
+	CurrentSwapBufferIdx(0),
 	M4XQualityLevel(0),
 	bMSAA4XEnabled(false),
 	BufferFormat(DXGI_FORMAT_R8G8B8A8_UNORM),
@@ -121,8 +122,58 @@ int FWinEngine::PostInit()
 	return 1;
 }
 
-void FWinEngine::Tick()
+void FWinEngine::Tick(float DeltaTime)
 {
+	CommandAllocator->Reset();
+	CommandList->Reset(CommandAllocator.Get(), nullptr);
+
+	 
+	CD3DX12_RESOURCE_BARRIER ResourceBarrierPresent = CD3DX12_RESOURCE_BARRIER::Transition(
+		GetCurrentSwapBuffer(),
+		D3D12_RESOURCE_STATE_RENDER_TARGET,
+		D3D12_RESOURCE_STATE_RENDER_TARGET
+	);
+	CommandList->ResourceBarrier(1, &ResourceBarrierPresent);
+
+	CommandList->ClearRenderTargetView(
+		GetCurrentSwapBufferView(),
+		DirectX::Colors::Red,
+		0,
+		nullptr
+	);
+
+	CommandList->ClearDepthStencilView(
+		GetCurrentDepthStencilView(),
+		D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL,
+		1.0f,
+		0.0f,
+		0.0f,
+		nullptr
+	);
+
+	D3D12_CPU_DESCRIPTOR_HANDLE SBV = GetCurrentSwapBufferView();
+	D3D12_CPU_DESCRIPTOR_HANDLE DSV = GetCurrentDepthStencilView();
+	CommandList->OMSetRenderTargets(
+		RTVDescriptorSize,
+		&SBV,
+		true,
+		&DSV
+	);
+
+	CD3DX12_RESOURCE_BARRIER ResourceBarrierCurr = CD3DX12_RESOURCE_BARRIER::Transition(
+		GetCurrentSwapBuffer(),
+		D3D12_RESOURCE_STATE_RENDER_TARGET,
+		D3D12_RESOURCE_STATE_RENDER_TARGET
+	);
+	CommandList->ResourceBarrier(1, &ResourceBarrierCurr);
+
+	CommandList->Close();
+
+	ID3D12CommandList* CommandLists[] = { CommandList.Get() };
+	CommandQueue->ExecuteCommandLists(_countof(CommandLists), CommandLists);
+
+	CurrentSwapBufferIdx = CurrentSwapBufferIdx == 0 ? 1 : 0;
+	SwapChain->Present(0, 0);
 }
 
 int FWinEngine::PreExit()
@@ -143,18 +194,18 @@ int FWinEngine::PostExit()
 int FWinEngine::InitWindows(FWinMainCommandParameters Parameters)
 {
 	WNDCLASSEX WindowsClass;
-	WindowsClass.cbSize = sizeof(WNDCLASSEX); //对象占据多大内存
-	WindowsClass.cbClsExtra = 0; //是否需要额外空间
-	WindowsClass.cbWndExtra = 0; //是否需要额外内存
-	WindowsClass.hbrBackground = nullptr; //如果有设置那就是GDI擦除
-	WindowsClass.hCursor = LoadCursor(nullptr, IDC_ARROW); //设置箭头光标
-	WindowsClass.hIcon = LoadIcon(nullptr, IDI_APPLICATION); //exe图标
-	WindowsClass.hIconSm = nullptr; //win左上角图标
-	WindowsClass.hInstance = Parameters.HInstance; //窗口实例
+	WindowsClass.cbSize = sizeof(WNDCLASSEX);
+	WindowsClass.cbClsExtra = 0; 
+	WindowsClass.cbWndExtra = 0;
+	WindowsClass.hbrBackground = nullptr;
+	WindowsClass.hCursor = LoadCursor(nullptr, IDC_ARROW); 
+	WindowsClass.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
+	WindowsClass.hIconSm = nullptr; 
+	WindowsClass.hInstance = Parameters.HInstance; 
 	WindowsClass.lpfnWndProc = EngineWindowProc;
-	WindowsClass.lpszClassName = L"XEngine"; //窗口名字
-	WindowsClass.lpszMenuName = nullptr; //
-	WindowsClass.style = CS_HREDRAW | CS_VREDRAW; //垂直水平绘制窗口
+	WindowsClass.lpszClassName = L"XEngine"; 
+	WindowsClass.lpszMenuName = nullptr; 
+	WindowsClass.style = CS_HREDRAW | CS_VREDRAW; 
 
 	ATOM RegisterAtom = RegisterClassEx(&WindowsClass);
 	if (!RegisterAtom)
@@ -296,4 +347,23 @@ int FWinEngine::InitDirectX3D()
 	);
 
 	return 1;
+}
+
+ID3D12Resource* FWinEngine::GetCurrentSwapBuffer()
+{
+	return SwapChainBuffer[CurrentSwapBufferIdx].Get();
+}
+
+D3D12_CPU_DESCRIPTOR_HANDLE FWinEngine::GetCurrentSwapBufferView()
+{
+	return CD3DX12_CPU_DESCRIPTOR_HANDLE{
+		RTVHeap->GetCPUDescriptorHandleForHeapStart(),
+		CurrentSwapBufferIdx,
+		RTVDescriptorSize
+	};
+}
+
+D3D12_CPU_DESCRIPTOR_HANDLE FWinEngine::GetCurrentDepthStencilView()
+{
+	return CD3DX12_CPU_DESCRIPTOR_HANDLE{DSVHeap->GetCPUDescriptorHandleForHeapStart()};
 }
