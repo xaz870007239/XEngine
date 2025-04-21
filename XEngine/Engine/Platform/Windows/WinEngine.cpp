@@ -5,6 +5,7 @@
 #include "WindowsMessageProcessing.h"
 
 FWinEngine::FWinEngine() :
+	CurrentFenceIdx(0),
 	CurrentSwapBufferIdx(0),
 	M4XQualityLevel(0),
 	bMSAA4XEnabled(false),
@@ -42,6 +43,8 @@ int FWinEngine::Init(FWinMainCommandParameters Parameters)
 
 int FWinEngine::PostInit()
 {
+	WaitGPUCommandQueueComplete();
+
 	for (int i = 0; i < FEngineRenderConfig::Get()->BuffCount; ++i)
 	{
 		SwapChainBuffer[i].Reset();
@@ -119,6 +122,20 @@ int FWinEngine::PostInit()
 	ID3D12CommandList* CommandLists[] = { CommandList.Get() };
 	CommandQueue->ExecuteCommandLists(_countof(CommandLists), CommandLists);
 
+	ViewPortInfo.TopLeftX = 0;
+	ViewPortInfo.TopLeftY = 0;
+	ViewPortInfo.MinDepth = 0;
+	ViewPortInfo.MaxDepth = 1;
+	ViewPortInfo.Width = FEngineRenderConfig::Get()->ScreenWidth;
+	ViewPortInfo.Height = FEngineRenderConfig::Get()->ScreenHeight;
+
+	ViewPortRect.left = 0;
+	ViewPortRect.top = 0;
+	ViewPortRect.right = FEngineRenderConfig::Get()->ScreenWidth;
+	ViewPortRect.bottom = FEngineRenderConfig::Get()->ScreenHeight;
+
+	WaitGPUCommandQueueComplete();
+
 	return 1;
 }
 
@@ -134,6 +151,9 @@ void FWinEngine::Tick(float DeltaTime)
 		D3D12_RESOURCE_STATE_RENDER_TARGET
 	);
 	CommandList->ResourceBarrier(1, &ResourceBarrierPresent);
+
+	CommandList->RSSetViewports(1, &ViewPortInfo);
+	CommandList->RSSetScissorRects(1, &ViewPortRect);
 
 	CommandList->ClearRenderTargetView(
 		GetCurrentSwapBufferView(),
@@ -172,8 +192,10 @@ void FWinEngine::Tick(float DeltaTime)
 	ID3D12CommandList* CommandLists[] = { CommandList.Get() };
 	CommandQueue->ExecuteCommandLists(_countof(CommandLists), CommandLists);
 
-	CurrentSwapBufferIdx = CurrentSwapBufferIdx == 0 ? 1 : 0;
 	SwapChain->Present(0, 0);
+	CurrentSwapBufferIdx = CurrentSwapBufferIdx == 0 ? 1 : 0;
+
+	WaitGPUCommandQueueComplete();
 }
 
 int FWinEngine::PreExit()
@@ -366,4 +388,19 @@ D3D12_CPU_DESCRIPTOR_HANDLE FWinEngine::GetCurrentSwapBufferView()
 D3D12_CPU_DESCRIPTOR_HANDLE FWinEngine::GetCurrentDepthStencilView()
 {
 	return CD3DX12_CPU_DESCRIPTOR_HANDLE{DSVHeap->GetCPUDescriptorHandleForHeapStart()};
+}
+
+void FWinEngine::WaitGPUCommandQueueComplete()
+{
+	CurrentFenceIdx++;
+	CommandQueue->Signal(Fence.Get(), CurrentFenceIdx);
+	if (Fence->GetCompletedValue() < CurrentFenceIdx)
+	{
+		HANDLE EventHandle = CreateEventEx(nullptr, nullptr, 0, EVENT_ALL_ACCESS);
+		Fence->SetEventOnCompletion(CurrentFenceIdx, EventHandle);
+
+		WaitForSingleObject(EventHandle, INFINITE);
+
+		CloseHandle(EventHandle);
+	}
 }

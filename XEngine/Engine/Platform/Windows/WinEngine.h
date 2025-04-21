@@ -25,7 +25,12 @@ public:
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentSwapBufferView();
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentDepthStencilView();
 
+	void WaitGPUCommandQueueComplete();
+
 private:
+
+	D3D12_VIEWPORT ViewPortInfo;
+	D3D12_RECT ViewPortRect;
 
 	ComPtr<IDXGIFactory4> Factory;
 	ComPtr<ID3D12Device> Device;
@@ -44,6 +49,8 @@ private:
 	ComPtr<ID3D12Resource> DepthStencilBuffer;
 
 protected:
+
+	UINT64 CurrentFenceIdx;
 
 	int CurrentSwapBufferIdx;
 
