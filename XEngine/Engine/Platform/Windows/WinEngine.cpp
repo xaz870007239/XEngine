@@ -9,10 +9,10 @@ FWinEngine::FWinEngine() :
 	CurrentSwapBufferIdx(0),
 	M4XQualityLevel(0),
 	bMSAA4XEnabled(false),
-	BufferFormat(DXGI_FORMAT_R8G8B8A8_UNORM),
+	BackBufferFormat(DXGI_FORMAT_R8G8B8A8_UNORM),
 	DepthStencilFormat(DXGI_FORMAT_D24_UNORM_S8_UINT)
 {
-	for (int i = 0; i < FEngineRenderConfig::Get()->BuffCount; ++i)
+	for (int i = 0; i < FEngineRenderConfig::Get()->SwapChainCount; ++i)
 	{
 		SwapChainBuffer.push_back(ComPtr<ID3D12Resource>());
 	}
@@ -45,7 +45,7 @@ int FWinEngine::PostInit()
 {
 	WaitGPUCommandQueueComplete();
 
-	for (int i = 0; i < FEngineRenderConfig::Get()->BuffCount; ++i)
+	for (int i = 0; i < FEngineRenderConfig::Get()->SwapChainCount; ++i)
 	{
 		SwapChainBuffer[i].Reset();
 	}
@@ -53,20 +53,20 @@ int FWinEngine::PostInit()
 	DepthStencilBuffer.Reset();
 
 	ANALYSIS_HRESULT(SwapChain->ResizeBuffers(
-		FEngineRenderConfig::Get()->BuffCount,
+		FEngineRenderConfig::Get()->SwapChainCount,
 		FEngineRenderConfig::Get()->ScreenWidth,
 		FEngineRenderConfig::Get()->ScreenHeight,
-		BufferFormat,
+		BackBufferFormat,
 		DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH
 	));
 
 	RTVDescriptorSize = Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	CD3DX12_CPU_DESCRIPTOR_HANDLE RTVHandle{ RTVHeap->GetCPUDescriptorHandleForHeapStart() };
-	for (int i = 0; i < FEngineRenderConfig::Get()->BuffCount; ++i)
+	for (int i = 0; i < FEngineRenderConfig::Get()->SwapChainCount; ++i)
 	{
 		ANALYSIS_HRESULT(SwapChain->GetBuffer(i, IID_PPV_ARGS(&SwapChainBuffer[i])));
 		Device->CreateRenderTargetView(SwapChainBuffer[i].Get(), nullptr, RTVHandle);
-		RTVHandle.Offset(i, RTVDescriptorSize);
+		RTVHandle.Offset(1, RTVDescriptorSize);
 	}
 
 	D3D12_RESOURCE_DESC ResourceDesc{};
@@ -95,7 +95,7 @@ int FWinEngine::PostInit()
 		&ResourceDesc,
 		D3D12_RESOURCE_STATE_COMMON,
 		&ClearValue,
-		IID_PPV_ARGS(&DepthStencilBuffer)
+		IID_PPV_ARGS(DepthStencilBuffer.GetAddressOf())
 	));
 
 	D3D12_DEPTH_STENCIL_VIEW_DESC DSVDesc{};
@@ -104,11 +104,10 @@ int FWinEngine::PostInit()
 	DSVDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
 	DSVDesc.Flags = D3D12_DSV_FLAG_NONE;
 
-	D3D12_CPU_DESCRIPTOR_HANDLE DSVHandle{ DSVHeap->GetCPUDescriptorHandleForHeapStart() };
 	Device->CreateDepthStencilView(
 		DepthStencilBuffer.Get(),
 		&DSVDesc,
-		DSVHandle
+		DSVHeap->GetCPUDescriptorHandleForHeapStart()
 	);
 
 	CD3DX12_RESOURCE_BARRIER Barrier = CD3DX12_RESOURCE_BARRIER::Transition(
@@ -117,7 +116,8 @@ int FWinEngine::PostInit()
 		D3D12_RESOURCE_STATE_DEPTH_WRITE
 	); 
 	CommandList->ResourceBarrier(1, &Barrier);
-	ANALYSIS_HRESULT(CommandList->Close());
+	//ANALYSIS_HRESULT(CommandList->Close());
+	CommandList->Close();
 
 	ID3D12CommandList* CommandLists[] = { CommandList.Get() };
 	CommandQueue->ExecuteCommandLists(_countof(CommandLists), CommandLists);
@@ -143,11 +143,10 @@ void FWinEngine::Tick(float DeltaTime)
 {
 	CommandAllocator->Reset();
 	ANALYSIS_HRESULT(CommandList->Reset(CommandAllocator.Get(), nullptr));
-
 	 
 	CD3DX12_RESOURCE_BARRIER ResourceBarrierPresent = CD3DX12_RESOURCE_BARRIER::Transition(
 		GetCurrentSwapBuffer(),
-		D3D12_RESOURCE_STATE_RENDER_TARGET,
+		D3D12_RESOURCE_STATE_PRESENT,
 		D3D12_RESOURCE_STATE_RENDER_TARGET
 	);
 	CommandList->ResourceBarrier(1, &ResourceBarrierPresent);
@@ -168,13 +167,13 @@ void FWinEngine::Tick(float DeltaTime)
 		1.0f,
 		0.0f,
 		0.0f,
-		nullptr
+		NULL
 	);
 
 	D3D12_CPU_DESCRIPTOR_HANDLE SBV = GetCurrentSwapBufferView();
 	D3D12_CPU_DESCRIPTOR_HANDLE DSV = GetCurrentDepthStencilView();
 	CommandList->OMSetRenderTargets(
-		RTVDescriptorSize,
+		1,
 		&SBV,
 		true,
 		&DSV
@@ -182,10 +181,9 @@ void FWinEngine::Tick(float DeltaTime)
 
 	CD3DX12_RESOURCE_BARRIER ResourceBarrierCurr = CD3DX12_RESOURCE_BARRIER::Transition(
 		GetCurrentSwapBuffer(),
-		D3D12_RESOURCE_STATE_RENDER_TARGET,
-		D3D12_RESOURCE_STATE_RENDER_TARGET
-	);
-	CommandList->ResourceBarrier(1, &ResourceBarrierCurr);
+		D3D12_RESOURCE_STATE_RENDER_TARGET, 
+		D3D12_RESOURCE_STATE_PRESENT);
+	CommandList->ResourceBarrier(1, &ResourceBarrierCurr );
 
 	ANALYSIS_HRESULT(CommandList->Close());
 
@@ -316,7 +314,7 @@ int FWinEngine::InitDirectX3D()
 	ANALYSIS_HRESULT(CommandList->Close());
 
 	D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS QualityLevels{};
-	//QualityLevels.Format = BackBufferFormat;
+	QualityLevels.Format = BackBufferFormat;
 	QualityLevels.SampleCount = 4;
 	QualityLevels.Flags = D3D12_MULTISAMPLE_QUALITY_LEVELS_FLAG_NONE;
 	QualityLevels.NumQualityLevels = 0;
@@ -335,8 +333,8 @@ int FWinEngine::InitDirectX3D()
 	SwapChainDesc.BufferDesc.RefreshRate.Numerator = FEngineRenderConfig::Get()->RefreshRate;
 	SwapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
 	SwapChainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-	SwapChainDesc.BufferDesc.Format = BufferFormat;
-	SwapChainDesc.BufferCount = FEngineRenderConfig::Get()->BuffCount;
+	SwapChainDesc.BufferDesc.Format = BackBufferFormat;
+	SwapChainDesc.BufferCount = FEngineRenderConfig::Get()->SwapChainCount;
 	SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	SwapChainDesc.OutputWindow = WindowHandle;
 	SwapChainDesc.Windowed = true;
@@ -389,19 +387,25 @@ D3D12_CPU_DESCRIPTOR_HANDLE FWinEngine::GetCurrentSwapBufferView()
 
 D3D12_CPU_DESCRIPTOR_HANDLE FWinEngine::GetCurrentDepthStencilView()
 {
-	return CD3DX12_CPU_DESCRIPTOR_HANDLE{DSVHeap->GetCPUDescriptorHandleForHeapStart()};
+	return DSVHeap->GetCPUDescriptorHandleForHeapStart();
 }
 
 void FWinEngine::WaitGPUCommandQueueComplete()
 {
 	CurrentFenceIdx++;
 	ANALYSIS_HRESULT(CommandQueue->Signal(Fence.Get(), CurrentFenceIdx));
+
 	if (Fence->GetCompletedValue() < CurrentFenceIdx)
 	{
-		HANDLE EventHandle = CreateEventEx(NULL, NULL, 0, EVENT_ALL_ACCESS);
-		ANALYSIS_HRESULT(Fence->SetEventOnCompletion(CurrentFenceIdx, EventHandle));
+		//SECURITY_ATTRIBUTES
+		//CREATE_EVENT_INITIAL_SET  0x00000002
+		//CREATE_EVENT_MANUAL_RESET 0x00000001
+		//ResetEvents
+		HANDLE EventEX = CreateEventEx(NULL, NULL, 0, EVENT_ALL_ACCESS);
 
-		WaitForSingleObject(EventHandle, INFINITE);
-		CloseHandle(EventHandle);
+		ANALYSIS_HRESULT(Fence->SetEventOnCompletion(CurrentFenceIdx, EventEX));
+
+		WaitForSingleObject(EventEX, INFINITE);
+		CloseHandle(EventEX);
 	}
 }

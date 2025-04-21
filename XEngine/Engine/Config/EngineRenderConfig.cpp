@@ -6,7 +6,7 @@ FEngineRenderConfig::FEngineRenderConfig() :
 	ScreenWidth(1280),
 	ScreenHeight(720),
 	RefreshRate(60),
-	BuffCount(2)
+	SwapChainCount(2)
 {
 }
 

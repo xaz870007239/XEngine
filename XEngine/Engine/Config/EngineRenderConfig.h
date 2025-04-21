@@ -8,7 +8,7 @@ public:
 	int ScreenWidth;
 	int ScreenHeight;
 	int RefreshRate;
-	int BuffCount;
+	int SwapChainCount;
 
 	static FEngineRenderConfig* Get();
 	static void Destroy();

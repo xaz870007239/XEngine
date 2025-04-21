@@ -59,7 +59,7 @@ protected:
 	bool bMSAA4XEnabled;
 	UINT RTVDescriptorSize;
 
-	DXGI_FORMAT BufferFormat;
+	DXGI_FORMAT BackBufferFormat;
 	DXGI_FORMAT DepthStencilFormat;
 
 };
