@@ -171,9 +171,6 @@
     <ClCompile Include="Engine\Platform\Windows\WindowsMessageProcessing.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Debug\EngineDebug.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Core\Engine.h">
@@ -383,7 +380,10 @@
     <ClInclude Include="Engine\XDebug\Log\EngineLog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Debug\EngineDebug.h">
+    <ClInclude Include="Engine\EngineDebug\EngineLog\EngineLog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\EngineDebug\EngineDebug.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

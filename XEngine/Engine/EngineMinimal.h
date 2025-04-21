@@ -1,7 +1,7 @@
 #include "../3dparty/simple_library/public/simple_library.h"
 #include "../Engine/Config/EngineRenderConfig.h"
-#include "Debug/Log/EngineLog.h"
-#include "Debug/EngineDebug.h"
+#include "EngineDebug/EngineLog/EngineLog.h"
+#include "EngineDebug/EngineDebug.h"
 #include <vector>
 
 #pragma comment(lib, "d3dcompiler.lib")
