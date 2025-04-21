@@ -95,10 +95,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, in
 	Init(Engine);
 #endif
 
-	while (true)
+#if defined (_WIN32) || defined(_WIN64)
+	MSG EngineMsg{0};
+	while (EngineMsg.message != WM_QUIT)
 	{
-		Tick(Engine);
+		if (PeekMessage(&EngineMsg, 0, 0, 0, PM_REMOVE))
+		{
+			TranslateMessage(&EngineMsg);
+		}
+		else
+		{
+			Tick(Engine);
+		}
 	}
+
+#elif 
+	Tick(Engine);
+#endif
 
 	Exit(Engine);
 	

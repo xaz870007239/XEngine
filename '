@@ -117,7 +117,7 @@ int FWinEngine::PostInit()
 		D3D12_RESOURCE_STATE_DEPTH_WRITE
 	); 
 	CommandList->ResourceBarrier(1, &Barrier);
-	ANALYSIS_HRESULT(CommandList->Close());
+	CommandList->Close();
 
 	ID3D12CommandList* CommandLists[] = { CommandList.Get() };
 	CommandQueue->ExecuteCommandLists(_countof(CommandLists), CommandLists);
@@ -187,7 +187,7 @@ void FWinEngine::Tick(float DeltaTime)
 	);
 	CommandList->ResourceBarrier(1, &ResourceBarrierCurr);
 
-	ANALYSIS_HRESULT(CommandList->Close());
+	CommandList->Close();
 
 	ID3D12CommandList* CommandLists[] = { CommandList.Get() };
 	CommandQueue->ExecuteCommandLists(_countof(CommandLists), CommandLists);
@@ -355,20 +355,20 @@ int FWinEngine::InitDirectX3D()
 	RTVHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 	RTVHeapDesc.NodeMask = 0;
 	RTVHeapDesc.NumDescriptors = 2;
-	ANALYSIS_HRESULT(Device->CreateDescriptorHeap(
+	Device->CreateDescriptorHeap(
 		&RTVHeapDesc,
 		IID_PPV_ARGS(RTVHeap.GetAddressOf())
-	));
+	);
 
 	D3D12_DESCRIPTOR_HEAP_DESC DSVHeapDesc{};
 	DSVHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
 	DSVHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 	DSVHeapDesc.NodeMask = 0;
 	DSVHeapDesc.NumDescriptors = 1;
-	ANALYSIS_HRESULT(Device->CreateDescriptorHeap(
+	Device->CreateDescriptorHeap(
 		&DSVHeapDesc,
 		IID_PPV_ARGS(DSVHeap.GetAddressOf())
-	));
+	);
 
 	return 1;
 }
