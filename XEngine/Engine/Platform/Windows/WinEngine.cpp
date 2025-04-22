@@ -5,6 +5,7 @@
 #include "WindowsMessageProcessing.h"
 #include "../../Rendering/Core/Rendering.h"
 #include "../../Mesh/Core/Mesh.h"
+#include "../../Mesh/BoxMesh.h"
 
 FWinEngine::FWinEngine() :
 	CurrentFenceIdx(0),
@@ -141,6 +142,8 @@ int FWinEngine::PostInit()
 	ViewPortRect.bottom = FEngineRenderConfig::Get()->ScreenHeight;
 
 	WaitGPUCommandQueueComplete();
+
+	FBoxMesh* Box = FBoxMesh::CreateMesh();
 
 	return 1;
 }

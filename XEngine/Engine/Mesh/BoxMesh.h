@@ -2,7 +2,7 @@
 
 #include "Core/Mesh.h"
 
-class BoxMesh : public Mesh 
+class FBoxMesh : public Mesh 
 {
 public:
 
@@ -12,5 +12,5 @@ public:
 	virtual void BuildMesh(const FMeshRenderData* InRenderingData) override;
 	virtual void Draw(float DeltaTime) override;
 
-	static BoxMesh* CreateMesh();
+	static FBoxMesh* CreateMesh();
 };

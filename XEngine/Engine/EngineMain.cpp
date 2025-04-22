@@ -85,7 +85,7 @@ FEngine* Engine = nullptr;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, int showCmd)
 {
-	FEngine* Engine = FEngineFactory::CreateEngine();
+	Engine = FEngineFactory::CreateEngine();
 	if (!Engine)
 	{
 		return -1;
