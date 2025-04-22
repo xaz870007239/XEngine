@@ -18,14 +18,14 @@ void BoxMesh::Draw(float DeltaTime)
 BoxMesh* BoxMesh::CreateMesh()
 {
 	FMeshRenderData MeshRenderData;
-	MeshRenderData.PosData.push_back(FVector{ XMFLOAT3{0.f,0.f,0.f}, XMFLOAT4{Colors::White} });
-	MeshRenderData.PosData.push_back(FVector{ XMFLOAT3{0.f,1.f,0.f}, XMFLOAT4{Colors::White} });
-	MeshRenderData.PosData.push_back(FVector{ XMFLOAT3{1.f,1.f,0.f}, XMFLOAT4{Colors::White} });
-	MeshRenderData.PosData.push_back(FVector{ XMFLOAT3{1.f,0.f,0.f}, XMFLOAT4{Colors::White} });
-	MeshRenderData.PosData.push_back(FVector{ XMFLOAT3{0.f,0.f,1.f}, XMFLOAT4{Colors::White} });
-	MeshRenderData.PosData.push_back(FVector{ XMFLOAT3{0.f,1.f,1.f}, XMFLOAT4{Colors::White} });
-	MeshRenderData.PosData.push_back(FVector{ XMFLOAT3{1.f,1.f,1.f}, XMFLOAT4{Colors::White} });
-	MeshRenderData.PosData.push_back(FVector{ XMFLOAT3{1.f,0.f,1.f}, XMFLOAT4{Colors::White} });
+	MeshRenderData.VertexData.push_back(FVector{ XMFLOAT3{0.f,0.f,0.f}, XMFLOAT4{Colors::White} });
+	MeshRenderData.VertexData.push_back(FVector{ XMFLOAT3{0.f,1.f,0.f}, XMFLOAT4{Colors::White} });
+	MeshRenderData.VertexData.push_back(FVector{ XMFLOAT3{1.f,1.f,0.f}, XMFLOAT4{Colors::White} });
+	MeshRenderData.VertexData.push_back(FVector{ XMFLOAT3{1.f,0.f,0.f}, XMFLOAT4{Colors::White} });
+	MeshRenderData.VertexData.push_back(FVector{ XMFLOAT3{0.f,0.f,1.f}, XMFLOAT4{Colors::White} });
+	MeshRenderData.VertexData.push_back(FVector{ XMFLOAT3{0.f,1.f,1.f}, XMFLOAT4{Colors::White} });
+	MeshRenderData.VertexData.push_back(FVector{ XMFLOAT3{1.f,1.f,1.f}, XMFLOAT4{Colors::White} });
+	MeshRenderData.VertexData.push_back(FVector{ XMFLOAT3{1.f,0.f,1.f}, XMFLOAT4{Colors::White} });
 	
 	//front
 	MeshRenderData.IndexData.push_back(0);

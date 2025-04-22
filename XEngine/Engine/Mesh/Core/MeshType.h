@@ -13,6 +13,6 @@ struct FVector
 
 struct FMeshRenderData
 {
-	vector<FVector> PosData;
-	vector<UINT16> IndexData;
+	vector<FVector> VertexData;
+	vector<uint16_t> IndexData;
 };

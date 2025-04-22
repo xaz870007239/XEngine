@@ -20,6 +20,10 @@ FWinEngine::FWinEngine() :
 	}
 }
 
+FWinEngine::~FWinEngine()
+{
+}
+
 int FWinEngine::PreInit()
 {
 	const char LogPath[] = "../log";

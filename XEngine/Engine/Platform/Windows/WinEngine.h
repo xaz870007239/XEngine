@@ -6,6 +6,7 @@
 class FWinEngine : public FEngine
 {
 public:
+
 	FWinEngine();
 	~FWinEngine();
 
@@ -27,7 +28,10 @@ public:
 
 	void WaitGPUCommandQueueComplete();
 
-private:
+	ComPtr<ID3D12Device> GetDXDevice() const { return Device; }
+	ComPtr<ID3D12GraphicsCommandList> GetCommandList() const { return CommandList; }
+
+protected:
 
 	D3D12_VIEWPORT ViewPortInfo;
 	D3D12_RECT ViewPortRect;
