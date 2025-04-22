@@ -3,6 +3,7 @@
 #include "../../EngineMinimal.h"
 #include "WinEngine.h"
 #include "WindowsMessageProcessing.h"
+#include "../../Rendering/Core/Rendering.h"
 
 FWinEngine::FWinEngine() :
 	CurrentFenceIdx(0),
@@ -178,6 +179,11 @@ void FWinEngine::Tick(float DeltaTime)
 		true,
 		&DSV
 	);
+
+	for (auto& RenderingInterface : FRenderingInterface::RenderingInterfaces)
+	{
+		RenderingInterface->Draw(DeltaTime);
+	}
 
 	CD3DX12_RESOURCE_BARRIER ResourceBarrierCurr = CD3DX12_RESOURCE_BARRIER::Transition(
 		GetCurrentSwapBuffer(),

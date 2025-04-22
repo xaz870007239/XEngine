@@ -102,6 +102,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, in
 		if (PeekMessage(&EngineMsg, 0, 0, 0, PM_REMOVE))
 		{
 			TranslateMessage(&EngineMsg);
+			DispatchMessage(&EngineMsg);
 		}
 		else
 		{
