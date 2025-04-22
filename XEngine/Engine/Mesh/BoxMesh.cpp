@@ -57,7 +57,7 @@ BoxMesh* BoxMesh::CreateMesh()
 	MeshRenderData.IndexData.push_back(6);
 	MeshRenderData.IndexData.push_back(3);
 	MeshRenderData.IndexData.push_back(6);
-	MeshRenderData.IndexData.push_back(0);
+	MeshRenderData.IndexData.push_back(7);
 
 	//up
 	MeshRenderData.IndexData.push_back(1);
@@ -65,15 +65,15 @@ BoxMesh* BoxMesh::CreateMesh()
 	MeshRenderData.IndexData.push_back(6);
 	MeshRenderData.IndexData.push_back(1);
 	MeshRenderData.IndexData.push_back(6);
-	MeshRenderData.IndexData.push_back(0);
+	MeshRenderData.IndexData.push_back(7);
 
 	//down
 	MeshRenderData.IndexData.push_back(4);
 	MeshRenderData.IndexData.push_back(0);
-	MeshRenderData.IndexData.push_back(6);
+	MeshRenderData.IndexData.push_back(3);
 	MeshRenderData.IndexData.push_back(4);
 	MeshRenderData.IndexData.push_back(3);
-	MeshRenderData.IndexData.push_back(0);
+	MeshRenderData.IndexData.push_back(7);
 
 	BoxMesh* Result = new BoxMesh();
 	Result->BuildMesh(&MeshRenderData);
