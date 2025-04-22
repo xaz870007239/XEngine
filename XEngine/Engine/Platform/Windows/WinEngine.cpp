@@ -4,6 +4,7 @@
 #include "WinEngine.h"
 #include "WindowsMessageProcessing.h"
 #include "../../Rendering/Core/Rendering.h"
+#include "../../Mesh/Core/Mesh.h"
 
 FWinEngine::FWinEngine() :
 	CurrentFenceIdx(0),

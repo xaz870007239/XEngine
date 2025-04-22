@@ -21,6 +21,10 @@ FRenderingInterface::~FRenderingInterface()
 	}
 }
 
+void FRenderingInterface::Init()
+{
+}
+
 void FRenderingInterface::Draw(float DeltaTime)
 {
 	

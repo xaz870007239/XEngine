@@ -10,7 +10,8 @@ public:
 	FRenderingInterface();
 	~FRenderingInterface();
 
-	void Draw(float DeltaTime);
+	virtual void Init();
+	virtual void Draw(float DeltaTime);
 
 	bool operator==(const FRenderingInterface& Other)
 	{
