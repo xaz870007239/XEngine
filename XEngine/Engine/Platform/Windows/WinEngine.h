@@ -21,6 +21,7 @@ public:
 
 	int InitWindows(FWinMainCommandParameters Parameters);
 	int InitDirectX3D();
+	int PostInitDirectX3D();
 
 	ID3D12Resource* GetCurrentSwapBuffer();
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentSwapBufferView();
