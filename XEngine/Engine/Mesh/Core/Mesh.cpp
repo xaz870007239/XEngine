@@ -45,6 +45,37 @@ void Mesh::BuildMesh(const FMeshRenderData* InRenderingData)
 		CBVHeap->GetCPUDescriptorHandleForHeapStart()
 	);
 
+	CD3DX12_ROOT_PARAMETER RootParam[1];
+
+	CD3DX12_DESCRIPTOR_RANGE DescriptorRangeCBV;
+	DescriptorRangeCBV.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
+
+	RootParam[0].InitAsDescriptorTable(1, &DescriptorRangeCBV);
+
+	//D3D12_STATIC_SAMPLER_DESC SampleDesc{};
+	CD3DX12_ROOT_SIGNATURE_DESC RootSignatureDesc(1, RootParam, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+
+	ComPtr<ID3DBlob> SerializeRootSignature;
+	ComPtr<ID3DBlob> ErrorBlob;
+	D3D12SerializeRootSignature(
+		&RootSignatureDesc,
+		D3D_ROOT_SIGNATURE_VERSION_1,
+		SerializeRootSignature.GetAddressOf(),
+		ErrorBlob.GetAddressOf()
+	);
+
+	if (ErrorBlob) 
+	{
+
+	}
+
+	GetDXDevice()->CreateRootSignature(
+		0,
+		SerializeRootSignature->GetBufferPointer(),
+		SerializeRootSignature->GetBufferSize(),
+		IID_PPV_ARGS(&RootSignature)
+	);
+
 	VertexSizeInBytes = InRenderingData->VertexData.size() * sizeof(FVector);
 	IndexSizeInBytes = InRenderingData->IndexData.size() * sizeof(uint16_t);
 

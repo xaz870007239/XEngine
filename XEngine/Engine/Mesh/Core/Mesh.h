@@ -43,6 +43,7 @@ protected:
 	ComPtr<ID3D12Resource> VertexBufferTmpPtr;
 	ComPtr<ID3D12Resource> IndexBufferTmpPtr;
 
+	ComPtr<ID3D12RootSignature> RootSignature;
 	ComPtr<ID3D12DescriptorHeap> CBVHeap;
 
 	shared_ptr<FRenderingResourcesUpdate> ObjectConstants;
