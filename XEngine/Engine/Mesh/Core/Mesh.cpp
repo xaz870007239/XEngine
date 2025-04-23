@@ -76,6 +76,15 @@ void Mesh::BuildMesh(const FMeshRenderData* InRenderingData)
 		IID_PPV_ARGS(&RootSignature)
 	);
 
+	VShader.BuildShaders(L"../../../Shader/Hello.hlsl", "VertexShaderMain", "vs_5_0");
+	PShader.BuildShaders(L"../../../Shader/Hello.hlsl", "PixelShaderMain", "vs_5_0");
+
+	InputElemDesc =
+	{
+		{"POSITION",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0},
+		{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+	};
+
 	VertexSizeInBytes = InRenderingData->VertexData.size() * sizeof(FVector);
 	IndexSizeInBytes = InRenderingData->IndexData.size() * sizeof(uint16_t);
 

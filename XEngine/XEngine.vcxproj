@@ -184,6 +184,8 @@
     <ClCompile Include="Engine\Platform\Windows\WindowsMessageProcessing.cpp" />
     <ClCompile Include="Engine\Platform\Windows\WinEngine.cpp" />
     <ClCompile Include="Engine\Rendering\Core\Rendering.cpp" />
+    <ClCompile Include="Engine\Shader\Core\Shader.cpp" />
+    <ClCompile Include="Engine\Shader\ShaderManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3dparty\simple_library\private\simple_channel\simple_net_connetion\simple_connetion_tcp.h" />
@@ -260,6 +262,8 @@
     <ClInclude Include="Engine\Platform\Windows\WinEngine.h" />
     <ClInclude Include="Engine\Rendering\Core\Rendering.h" />
     <ClInclude Include="Engine\Rendering\DirectX12\d3dx12.h" />
+    <ClInclude Include="Engine\Shader\Core\Shader.h" />
+    <ClInclude Include="Engine\Shader\ShaderManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -2,6 +2,7 @@
 
 #include "../../Rendering/Core/Rendering.h"
 #include "MeshType.h"
+#include "../../Shader/Core/Shader.h"
 
 struct FTransformation
 {
@@ -47,6 +48,11 @@ protected:
 	ComPtr<ID3D12DescriptorHeap> CBVHeap;
 
 	shared_ptr<FRenderingResourcesUpdate> ObjectConstants;
+
+	FShader VShader;
+	FShader PShader;
+
+	vector<D3D12_INPUT_ELEMENT_DESC> InputElemDesc;
 
 	int VertexSizeInBytes;
 	int IndexSizeInBytes;
