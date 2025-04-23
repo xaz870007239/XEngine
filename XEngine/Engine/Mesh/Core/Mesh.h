@@ -3,6 +3,19 @@
 #include "../../Rendering/Core/Rendering.h"
 #include "MeshType.h"
 
+struct FTransformation
+{
+	FTransformation() :
+		WorldMatrix(
+			1, 0, 0, 0,
+			0, 1, 0, 0,
+			0, 0, 0, 0,
+			0, 0, 0, 1)
+	{}
+
+	XMFLOAT4X4 WorldMatrix;
+};
+
 class Mesh : public FRenderingInterface
 {
 public:
@@ -29,6 +42,10 @@ protected:
 
 	ComPtr<ID3D12Resource> VertexBufferTmpPtr;
 	ComPtr<ID3D12Resource> IndexBufferTmpPtr;
+
+	ComPtr<ID3D12DescriptorHeap> CBVHeap;
+
+	shared_ptr<FRenderingResourcesUpdate> ObjectConstants;
 
 	int VertexSizeInBytes;
 	int IndexSizeInBytes;

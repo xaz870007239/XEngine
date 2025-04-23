@@ -103,3 +103,51 @@ ComPtr<ID3D12Resource> FRenderingInterface::ConstructDefaultBuffer(ComPtr<ID3D12
 
 	return Buffer;
 }
+
+FRenderingResourcesUpdate::FRenderingResourcesUpdate()
+{
+}
+
+FRenderingResourcesUpdate::~FRenderingResourcesUpdate()
+{
+	if (UploadBuffer)
+	{
+		UploadBuffer->Unmap(0, nullptr);
+		UploadBuffer = nullptr;
+	}
+}
+
+void FRenderingResourcesUpdate::Init(ID3D12Device* InDevice, UINT InElementSize, UINT InElementCount)
+{
+	assert(InDevice);
+
+	ElementSize = InElementSize;
+
+	CD3DX12_HEAP_PROPERTIES UploadProperties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+	CD3DX12_RESOURCE_DESC ResourceDesc = CD3DX12_RESOURCE_DESC::Buffer(InElementSize * InElementCount);
+	InDevice->CreateCommittedResource(
+		&UploadProperties,
+		D3D12_HEAP_FLAG_NONE,
+		&ResourceDesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&UploadBuffer)
+	);
+
+	UploadBuffer->Map(0, nullptr, reinterpret_cast<void**>(&Data));
+}
+
+void FRenderingResourcesUpdate::Update(int Index, const void* InData)
+{
+	memcpy(&Data[Index * ElementSize], InData, ElementSize);
+}
+
+UINT FRenderingResourcesUpdate::GetConstantBufferByteSize(UINT InTypeSize)
+{
+	return (InTypeSize + 255) & ~255;
+}
+
+UINT FRenderingResourcesUpdate::GetConstantBufferByteSize()
+{
+	return GetConstantBufferByteSize(ElementSize);
+}

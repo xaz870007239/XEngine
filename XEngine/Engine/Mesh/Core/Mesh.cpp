@@ -22,6 +22,29 @@ void Mesh::Init()
 
 void Mesh::BuildMesh(const FMeshRenderData* InRenderingData)
 {
+	D3D12_DESCRIPTOR_HEAP_DESC CBVHeapDesc{};
+	CBVHeapDesc.NumDescriptors = 1;
+	CBVHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+	CBVHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	CBVHeapDesc.NodeMask = 0;
+	GetDXDevice()->CreateDescriptorHeap(
+		&CBVHeapDesc,
+		IID_PPV_ARGS(&CBVHeap)
+	);
+
+	ObjectConstants = make_shared<FRenderingResourcesUpdate>();
+	ObjectConstants->Init(GetDXDevice().Get(),sizeof(FTransformation), 1);
+	D3D12_GPU_VIRTUAL_ADDRESS GPUVirtualAddress = ObjectConstants.get()->GetBuffer()->GetGPUVirtualAddress();
+
+	D3D12_CONSTANT_BUFFER_VIEW_DESC CBVDesc{};
+	CBVDesc.BufferLocation = GPUVirtualAddress;
+	CBVDesc.SizeInBytes = ObjectConstants->GetConstantBufferByteSize();
+
+	GetDXDevice()->CreateConstantBufferView(
+		&CBVDesc,
+		CBVHeap->GetCPUDescriptorHandleForHeapStart()
+	);
+
 	VertexSizeInBytes = InRenderingData->VertexData.size() * sizeof(FVector);
 	IndexSizeInBytes = InRenderingData->IndexData.size() * sizeof(uint16_t);
 
