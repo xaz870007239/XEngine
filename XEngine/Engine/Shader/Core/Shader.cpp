@@ -3,7 +3,7 @@
 void FShader::BuildShaders(const wstring& InFileName, const string& InEntryFunName, const string& InShaderVersion)
 {
 	ComPtr<ID3DBlob> ErrorShaderMsg;
-	D3DCompileFromFile(InFileName.c_str(),
+	HRESULT ShaderRes = D3DCompileFromFile(InFileName.c_str(),
 		nullptr,
 		D3D_COMPILE_STANDARD_FILE_INCLUDE,
 		InEntryFunName.c_str(),
@@ -22,4 +22,6 @@ void FShader::BuildShaders(const wstring& InFileName, const string& InEntryFunNa
 	{
 		XLog_Error("%s", (char*)ErrorShaderMsg->GetBufferPointer());
 	}
+
+	ANALYSIS_HRESULT(ShaderRes);
 }

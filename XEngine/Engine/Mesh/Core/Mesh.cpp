@@ -76,8 +76,8 @@ void Mesh::BuildMesh(const FMeshRenderData* InRenderingData)
 		IID_PPV_ARGS(&RootSignature)
 	);
 
-	VShader.BuildShaders(L"../../../Shader/Hello.hlsl", "VertexShaderMain", "vs_5_0");
-	PShader.BuildShaders(L"../../../Shader/Hello.hlsl", "PixelShaderMain", "vs_5_0");
+	VShader.BuildShaders(L"../XEngine/Shader/Hello.hlsl", "VS_Main", "vs_5_0");
+	PShader.BuildShaders(L"../XEngine/Shader/Hello.hlsl", "PS_Main", "ps_5_0");
 
 	InputElemDesc =
 	{
