@@ -9,7 +9,10 @@ Mesh::Mesh() :
 	IndexBufferTmpPtr(nullptr),
 	VertexSizeInBytes(0),
 	IndexSizeInBytes(0),
-	Format(DXGI_FORMAT_R16_UINT)
+	Format(DXGI_FORMAT_R16_UINT),
+	WorldMatrix(FTransformation::IdentityMatrix4x4()),
+	ViewMatrix(FTransformation::IdentityMatrix4x4()),
+	ProjectMatrix(FTransformation::IdentityMatrix4x4())
 {}
 
 Mesh::~Mesh()
@@ -18,6 +21,15 @@ Mesh::~Mesh()
 
 void Mesh::Init()
 {
+	float AspectRatio = (float)FEngineRenderConfig::Get()->ScreenHeight / (float)FEngineRenderConfig::Get()->ScreenWidth;
+	XMMATRIX Project = XMMatrixPerspectiveFovLH(
+		0.25f * 3.1415926535f,
+		AspectRatio,
+		1.0f,
+		1000.0f
+	);
+
+	XMStoreFloat4x4(&ProjectMatrix, Project);
 }
 
 void Mesh::BuildMesh(const FMeshRenderData* InRenderingData)
@@ -32,13 +44,13 @@ void Mesh::BuildMesh(const FMeshRenderData* InRenderingData)
 		IID_PPV_ARGS(&CBVHeap)
 	);
 
-	ObjectConstants = make_shared<FRenderingResourcesUpdate>();
-	ObjectConstants->Init(GetDevice().Get(),sizeof(FTransformation), 1);
-	D3D12_GPU_VIRTUAL_ADDRESS GPUVirtualAddress = ObjectConstants.get()->GetBuffer()->GetGPUVirtualAddress();
+	ObjConstants = make_shared<FRenderingResourcesUpdate>();
+	ObjConstants->Init(GetDevice().Get(),sizeof(FTransformation), 1);
+	D3D12_GPU_VIRTUAL_ADDRESS GPUVirtualAddress = ObjConstants.get()->GetBuffer()->GetGPUVirtualAddress();
 
 	D3D12_CONSTANT_BUFFER_VIEW_DESC CBVDesc{};
 	CBVDesc.BufferLocation = GPUVirtualAddress;
-	CBVDesc.SizeInBytes = ObjectConstants->GetConstantBufferByteSize();
+	CBVDesc.SizeInBytes = ObjConstants->GetConstantBufferByteSize();
 
 	GetDevice()->CreateConstantBufferView(
 		&CBVDesc,
@@ -149,7 +161,22 @@ void Mesh::Draw(float DeltaTime)
 
 void Mesh::PostDraw(float DeltaTime)
 {
-	
+	XMUINT3 MeshPost = XMUINT3(5.0f, 5.0f, 5.0f);
+
+	XMVECTOR Pos = XMVectorSet(MeshPost.x, MeshPost.y, MeshPost.z, 1.0f);
+	XMVECTOR ViewTarget = XMVectorZero();
+	XMVECTOR ViewUp = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+
+	XMMATRIX ViewLookAt = XMMatrixLookAtLH(Pos, ViewTarget, ViewUp);
+	XMStoreFloat4x4(&ViewMatrix, ViewLookAt);
+
+	XMMATRIX AtrixWorld = XMLoadFloat4x4(&WorldMatrix);
+	XMMATRIX AtrixProject = XMLoadFloat4x4(&ProjectMatrix);
+	XMMATRIX WVP = AtrixWorld * ViewLookAt * AtrixProject;
+
+	FTransformation ObjTransform;
+	XMStoreFloat4x4(&ObjTransform.WorldMatrix, XMMatrixTranspose(WVP));
+	ObjConstants->Update(0, &ObjTransform);
 }
 
 Mesh* Mesh::CreateMesh(const FMeshRenderData* InRenderingData)

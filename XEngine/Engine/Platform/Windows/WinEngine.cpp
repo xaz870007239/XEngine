@@ -82,7 +82,7 @@ void FWinEngine::Tick(float DeltaTime)
 
 	CommandList->ClearRenderTargetView(
 		GetCurrentSwapBufferView(),
-		DirectX::Colors::Red,
+		DirectX::Colors::Black,
 		0,
 		nullptr
 	);

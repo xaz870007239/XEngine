@@ -49,7 +49,7 @@ protected:
 
 	ComPtr<ID3D12PipelineState> PSO;
 
-	shared_ptr<FRenderingResourcesUpdate> ObjectConstants;
+	shared_ptr<FRenderingResourcesUpdate> ObjConstants;
 
 	FShader VShader;
 	FShader PShader;
@@ -60,4 +60,8 @@ protected:
 	int IndexSizeInBytes;
 
 	DXGI_FORMAT Format;
+
+	XMFLOAT4X4 WorldMatrix;
+	XMFLOAT4X4 ViewMatrix;
+	XMFLOAT4X4 ProjectMatrix;
 };
