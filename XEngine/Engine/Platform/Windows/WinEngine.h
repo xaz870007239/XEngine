@@ -23,13 +23,17 @@ public:
 	int InitDirectX3D();
 	int PostInitDirectX3D();
 
-	ID3D12Resource* GetCurrentSwapBuffer();
-	D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentSwapBufferView();
-	D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentDepthStencilView();
+	ID3D12Resource* GetCurrentSwapBuffer() const;
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentSwapBufferView() const;
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentDepthStencilView() const;
+	DXGI_FORMAT GetBackBufferFormat() const { return BackBufferFormat; }
+	DXGI_FORMAT GetDepthStencilFormat() const { return DepthStencilFormat; }
+	UINT GetDXGISampleCount() const;
+	UINT GetDXGISampleQuality() const;
 
 	void WaitGPUCommandQueueComplete();
 
-	ComPtr<ID3D12Device> GetDXDevice() const { return Device; }
+	ComPtr<ID3D12Device> GetDevice() const { return Device; }
 	ComPtr<ID3D12GraphicsCommandList> GetCommandList() const { return CommandList; }
 
 protected:

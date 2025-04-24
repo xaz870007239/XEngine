@@ -32,11 +32,19 @@ void FRenderingInterface::Draw(float DeltaTime)
 	
 }
 
-ComPtr<ID3D12Device> FRenderingInterface::GetDXDevice() const
+#if defined(_WIN32)
+FWinEngine* FRenderingInterface::GetEngine() const
 {
-	if (FWinEngine* WinEngine = dynamic_cast<FWinEngine*>(Engine))
+	return dynamic_cast<FWinEngine*>(Engine);
+}
+#else
+#endif
+
+ComPtr<ID3D12Device> FRenderingInterface::GetDevice() const
+{
+	if (const FWinEngine* WinEngine = GetEngine())
 	{
-		return WinEngine->GetDXDevice();
+		return WinEngine->GetDevice();
 	}
 
 	return nullptr;
@@ -58,7 +66,7 @@ ComPtr<ID3D12Resource> FRenderingInterface::ConstructDefaultBuffer(ComPtr<ID3D12
 
 	CD3DX12_RESOURCE_DESC BufferResourceDESC = CD3DX12_RESOURCE_DESC::Buffer(InDataSize);
 	CD3DX12_HEAP_PROPERTIES BufferProperties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
-	ANALYSIS_HRESULT(GetDXDevice()->CreateCommittedResource(
+	ANALYSIS_HRESULT(GetDevice()->CreateCommittedResource(
 		&BufferProperties,
 		D3D12_HEAP_FLAG_NONE,
 		&BufferResourceDESC,
@@ -68,7 +76,7 @@ ComPtr<ID3D12Resource> FRenderingInterface::ConstructDefaultBuffer(ComPtr<ID3D12
 	);
 
 	CD3DX12_HEAP_PROPERTIES UpdateBufferProperties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
-	ANALYSIS_HRESULT(GetDXDevice()->CreateCommittedResource(
+	ANALYSIS_HRESULT(GetDevice()->CreateCommittedResource(
 		&UpdateBufferProperties,
 		D3D12_HEAP_FLAG_NONE,
 		&BufferResourceDESC,
@@ -77,7 +85,7 @@ ComPtr<ID3D12Resource> FRenderingInterface::ConstructDefaultBuffer(ComPtr<ID3D12
 		IID_PPV_ARGS(OutTmpBuffer.GetAddressOf()))
 	);
 
-	D3D12_SUBRESOURCE_DATA SubResourceData = {};
+	D3D12_SUBRESOURCE_DATA SubResourceData{};
 	SubResourceData.pData = InData;
 	SubResourceData.RowPitch = InDataSize;
 	SubResourceData.SlicePitch = SubResourceData.RowPitch;
@@ -151,3 +159,4 @@ UINT FRenderingResourcesUpdate::GetConstantBufferByteSize()
 {
 	return GetConstantBufferByteSize(ElementSize);
 }
+

@@ -205,7 +205,9 @@ int FWinEngine::InitDirectX3D()
 	{
 		ComPtr<IDXGIAdapter> WARPAdapter;
 		ANALYSIS_HRESULT(Factory->EnumWarpAdapter(IID_PPV_ARGS(&WARPAdapter)));
-		ANALYSIS_HRESULT(D3D12CreateDevice(WARPAdapter.Get(),
+
+		ANALYSIS_HRESULT(D3D12CreateDevice(
+			WARPAdapter.Get(),
 			D3D_FEATURE_LEVEL_11_0,
 			IID_PPV_ARGS(&Device)
 		));
@@ -267,8 +269,8 @@ int FWinEngine::InitDirectX3D()
 	SwapChainDesc.Windowed = true;
 	SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 	SwapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
-	SwapChainDesc.SampleDesc.Count = bMSAA4XEnabled ? 4 : 1;
-	SwapChainDesc.SampleDesc.Quality = bMSAA4XEnabled ? (M4XQualityLevel - 1) : 0;
+	SwapChainDesc.SampleDesc.Count = GetDXGISampleCount();
+	SwapChainDesc.SampleDesc.Quality = GetDXGISampleQuality();
 	ANALYSIS_HRESULT(Factory->CreateSwapChain(
 		CommandQueue.Get(),
 		&SwapChainDesc,
@@ -396,12 +398,12 @@ int FWinEngine::PostInitDirectX3D()
 	return 1;
 }
 
-ID3D12Resource* FWinEngine::GetCurrentSwapBuffer()
+ID3D12Resource* FWinEngine::GetCurrentSwapBuffer() const
 {
 	return SwapChainBuffer[CurrentSwapBufferIdx].Get();
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE FWinEngine::GetCurrentSwapBufferView()
+D3D12_CPU_DESCRIPTOR_HANDLE FWinEngine::GetCurrentSwapBufferView() const
 {
 	return CD3DX12_CPU_DESCRIPTOR_HANDLE{
 		RTVHeap->GetCPUDescriptorHandleForHeapStart(),
@@ -410,9 +412,19 @@ D3D12_CPU_DESCRIPTOR_HANDLE FWinEngine::GetCurrentSwapBufferView()
 	};
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE FWinEngine::GetCurrentDepthStencilView()
+D3D12_CPU_DESCRIPTOR_HANDLE FWinEngine::GetCurrentDepthStencilView() const
 {
 	return DSVHeap->GetCPUDescriptorHandleForHeapStart();
+}
+
+UINT FWinEngine::GetDXGISampleCount() const
+{
+	return bMSAA4XEnabled ? 4 : 1;
+}
+
+UINT FWinEngine::GetDXGISampleQuality() const
+{
+	return bMSAA4XEnabled ? (M4XQualityLevel - 1) : 0;
 }
 
 void FWinEngine::WaitGPUCommandQueueComplete()

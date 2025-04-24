@@ -27,20 +27,20 @@ void Mesh::BuildMesh(const FMeshRenderData* InRenderingData)
 	CBVHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	CBVHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	CBVHeapDesc.NodeMask = 0;
-	GetDXDevice()->CreateDescriptorHeap(
+	GetDevice()->CreateDescriptorHeap(
 		&CBVHeapDesc,
 		IID_PPV_ARGS(&CBVHeap)
 	);
 
 	ObjectConstants = make_shared<FRenderingResourcesUpdate>();
-	ObjectConstants->Init(GetDXDevice().Get(),sizeof(FTransformation), 1);
+	ObjectConstants->Init(GetDevice().Get(),sizeof(FTransformation), 1);
 	D3D12_GPU_VIRTUAL_ADDRESS GPUVirtualAddress = ObjectConstants.get()->GetBuffer()->GetGPUVirtualAddress();
 
 	D3D12_CONSTANT_BUFFER_VIEW_DESC CBVDesc{};
 	CBVDesc.BufferLocation = GPUVirtualAddress;
 	CBVDesc.SizeInBytes = ObjectConstants->GetConstantBufferByteSize();
 
-	GetDXDevice()->CreateConstantBufferView(
+	GetDevice()->CreateConstantBufferView(
 		&CBVDesc,
 		CBVHeap->GetCPUDescriptorHandleForHeapStart()
 	);
@@ -69,7 +69,7 @@ void Mesh::BuildMesh(const FMeshRenderData* InRenderingData)
 
 	}
 
-	GetDXDevice()->CreateRootSignature(
+	GetDevice()->CreateRootSignature(
 		0,
 		SerializeRootSignature->GetBufferPointer(),
 		SerializeRootSignature->GetBufferSize(),
@@ -103,6 +103,28 @@ void Mesh::BuildMesh(const FMeshRenderData* InRenderingData)
 		IndexBufferTmpPtr,
 		InRenderingData->IndexData.data(),
 		IndexSizeInBytes);
+
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC GPSDesc{};
+	memset(&GPSDesc, 0, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
+	GPSDesc.InputLayout.pInputElementDescs = InputElemDesc.data();
+	GPSDesc.InputLayout.NumElements = (UINT)InputElemDesc.size();
+	GPSDesc.pRootSignature = RootSignature.Get();
+	GPSDesc.VS.pShaderBytecode = reinterpret_cast<BYTE*>(VShader.GetBufferPointer());
+	GPSDesc.VS.BytecodeLength = VShader.GetBufferSize();
+	GPSDesc.PS.pShaderBytecode = reinterpret_cast<BYTE*>(PShader.GetBufferPointer());
+	GPSDesc.PS.BytecodeLength = PShader.GetBufferSize();
+	GPSDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+	GPSDesc.SampleMask = UINT_MAX;
+	GPSDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	GPSDesc.NumRenderTargets = 1;
+	GPSDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+	GPSDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+	GPSDesc.SampleDesc.Count = GetEngine()->GetDXGISampleCount();
+	GPSDesc.SampleDesc.Quality = GetEngine()->GetDXGISampleQuality();
+	GPSDesc.RTVFormats[0] = GetEngine()->GetBackBufferFormat();
+	GPSDesc.DSVFormat = GetEngine()->GetDepthStencilFormat();
+
+	ANALYSIS_HRESULT(GetDevice()->CreateGraphicsPipelineState(&GPSDesc, IID_PPV_ARGS(&PSO)));
 }
 
 void Mesh::Draw(float DeltaTime)

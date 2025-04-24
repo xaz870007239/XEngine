@@ -15,7 +15,9 @@ int Init(FEngine* InEngine
 		return -1;
 	}
 
+#if defined(_WIN32) || defined(_WIN64)
 	FWinMainCommandParameters Parameters{ hInstance, prevInstance, cmdLine, showCmd };
+#endif
 
 	Result = InEngine->PreInit();
 	if (!Result)
@@ -93,11 +95,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, in
 
 #if defined (_WIN32) || defined(_WIN64)
 	Init(Engine, hInstance, prevInstance, cmdLine, showCmd);
-#elif
-	Init(Engine);
-#endif
 
-#if defined (_WIN32) || defined(_WIN64)
 	MSG EngineMsg{0};
 	while (EngineMsg.message != WM_QUIT)
 	{
@@ -113,9 +111,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, in
 	}
 
 #elif 
+	Init(Engine);
 	Tick(Engine);
 #endif
-
 	Exit(Engine);
 	
 	return 0;

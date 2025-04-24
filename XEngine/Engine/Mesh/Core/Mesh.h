@@ -47,6 +47,8 @@ protected:
 	ComPtr<ID3D12RootSignature> RootSignature;
 	ComPtr<ID3D12DescriptorHeap> CBVHeap;
 
+	ComPtr<ID3D12PipelineState> PSO;
+
 	shared_ptr<FRenderingResourcesUpdate> ObjectConstants;
 
 	FShader VShader;

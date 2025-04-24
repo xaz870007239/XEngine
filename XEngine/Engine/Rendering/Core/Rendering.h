@@ -2,6 +2,11 @@
 
 #include "../../EngineMinimal.h"
 
+#if defined(_WIN32)
+#include "../../Platform/Windows/WinEngine.h"
+#else
+#endif
+
 class FRenderingInterface
 {
 public:
@@ -20,7 +25,12 @@ public:
 
 	simple_c_guid GetGUID() const { return GUID; }
 
-	ComPtr<ID3D12Device> GetDXDevice() const;
+#if defined(_WIN32)
+	FWinEngine* GetEngine() const;
+#else
+	FEngine* GetEngine() const { return Engine; }
+#endif
+	ComPtr<ID3D12Device> GetDevice() const;
 	ComPtr<ID3D12GraphicsCommandList> GetCommandList() const;
 
 	ComPtr<ID3D12Resource> ConstructDefaultBuffer(ComPtr<ID3D12Resource>& OutTmpBuffer, const void* InData, UINT64 InDataSize);
