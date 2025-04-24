@@ -16,7 +16,9 @@ public:
 	~FRenderingInterface();
 
 	virtual void Init();
+	virtual void PreDraw(float DeltaTime);
 	virtual void Draw(float DeltaTime);
+	virtual void PostDraw(float DeltaTime);
 
 	bool operator==(const FRenderingInterface& Other)
 	{
@@ -32,6 +34,7 @@ public:
 #endif
 	ComPtr<ID3D12Device> GetDevice() const;
 	ComPtr<ID3D12GraphicsCommandList> GetCommandList() const;
+	ComPtr<ID3D12CommandAllocator> GetCommandAllocator() const;
 
 	ComPtr<ID3D12Resource> ConstructDefaultBuffer(ComPtr<ID3D12Resource>& OutTmpBuffer, const void* InData, UINT64 InDataSize);
 

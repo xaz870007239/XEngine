@@ -127,6 +127,11 @@ void Mesh::BuildMesh(const FMeshRenderData* InRenderingData)
 	ANALYSIS_HRESULT(GetDevice()->CreateGraphicsPipelineState(&GPSDesc, IID_PPV_ARGS(&PSO)));
 }
 
+void Mesh::PreDraw(float DeltaTime)
+{
+	ANALYSIS_HRESULT(GetCommandList()->Reset(GetCommandAllocator().Get(), PSO.Get()));
+}
+
 void Mesh::Draw(float DeltaTime)
 {
 	ID3D12DescriptorHeap* DestriptorHeaps[] = {CBVHeap.Get()};
@@ -140,6 +145,11 @@ void Mesh::Draw(float DeltaTime)
 	GetCommandList()->IASetIndexBuffer(&IBV);
 	//GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	GetCommandList()->DrawIndexedInstanced(IndexSizeInBytes / sizeof(uint16_t), 1, 0, 0, 0);
+}
+
+void Mesh::PostDraw(float DeltaTime)
+{
+	
 }
 
 Mesh* Mesh::CreateMesh(const FMeshRenderData* InRenderingData)
@@ -165,4 +175,13 @@ D3D12_INDEX_BUFFER_VIEW Mesh::GetIndexBufferView() const
 	IndexBufferView.Format = DXGI_FORMAT_R16_UINT;
 	IndexBufferView.SizeInBytes = sizeof(uint16_t) * IndexSizeInBytes;
 	return IndexBufferView;
+}
+
+XMFLOAT4X4 FTransformation::IdentityMatrix4x4()
+{
+	return XMFLOAT4X4(
+		1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 0, 0, 0,
+		0, 0, 0, 1);
 }

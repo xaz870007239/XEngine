@@ -34,6 +34,7 @@ public:
 	void WaitGPUCommandQueueComplete();
 
 	ComPtr<ID3D12Device> GetDevice() const { return Device; }
+	ComPtr<ID3D12CommandAllocator> GetCommandAllocator() const { return CommandAllocator; }
 	ComPtr<ID3D12GraphicsCommandList> GetCommandList() const { return CommandList; }
 
 protected:

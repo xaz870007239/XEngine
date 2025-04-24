@@ -7,14 +7,12 @@
 struct FTransformation
 {
 	FTransformation() :
-		WorldMatrix(
-			1, 0, 0, 0,
-			0, 1, 0, 0,
-			0, 0, 0, 0,
-			0, 0, 0, 1)
+		WorldMatrix(FTransformation::IdentityMatrix4x4())
 	{}
 
 	XMFLOAT4X4 WorldMatrix;
+
+	static XMFLOAT4X4 IdentityMatrix4x4();
 };
 
 class Mesh : public FRenderingInterface
@@ -26,7 +24,9 @@ public:
 
 	virtual void Init() override;
 	virtual void BuildMesh(const FMeshRenderData* InRenderingData);
+	virtual void PreDraw(float DeltaTime) override;
 	virtual void Draw(float DeltaTime) override;
+	virtual void PostDraw(float DeltaTime) override;
 
 	static Mesh* CreateMesh(const FMeshRenderData* InRenderingData);
 

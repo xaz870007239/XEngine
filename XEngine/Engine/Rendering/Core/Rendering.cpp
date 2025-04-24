@@ -27,9 +27,18 @@ void FRenderingInterface::Init()
 {
 }
 
+void FRenderingInterface::PreDraw(float DeltaTime)
+{
+	ANALYSIS_HRESULT(GetCommandList()->Reset(GetCommandAllocator().Get(), nullptr));
+}
+
 void FRenderingInterface::Draw(float DeltaTime)
 {
 	
+}
+
+void FRenderingInterface::PostDraw(float DeltaTime)
+{
 }
 
 #if defined(_WIN32)
@@ -52,9 +61,19 @@ ComPtr<ID3D12Device> FRenderingInterface::GetDevice() const
 
 ComPtr<ID3D12GraphicsCommandList> FRenderingInterface::GetCommandList() const
 {
-	if (FWinEngine* WinEngine = dynamic_cast<FWinEngine*>(Engine))
+	if (FWinEngine* WinEngine = GetEngine())
 	{
 		return WinEngine->GetCommandList();
+	}
+
+	return nullptr;
+}
+
+ComPtr<ID3D12CommandAllocator> FRenderingInterface::GetCommandAllocator() const
+{
+	if (FWinEngine* WinEngine = GetEngine())
+	{
+		return WinEngine->GetCommandAllocator();
 	}
 
 	return nullptr;

@@ -64,8 +64,12 @@ int FWinEngine::PostInit()
 void FWinEngine::Tick(float DeltaTime)
 {
 	CommandAllocator->Reset();
-	ANALYSIS_HRESULT(CommandList->Reset(CommandAllocator.Get(), nullptr));
-	 
+
+	for (auto& RenderingInterface : FRenderingInterface::RenderingInterfaces)
+	{
+		RenderingInterface->PreDraw(DeltaTime);
+	}
+
 	CD3DX12_RESOURCE_BARRIER ResourceBarrierPresent = CD3DX12_RESOURCE_BARRIER::Transition(
 		GetCurrentSwapBuffer(),
 		D3D12_RESOURCE_STATE_PRESENT,
@@ -104,6 +108,7 @@ void FWinEngine::Tick(float DeltaTime)
 	for (auto& RenderingInterface : FRenderingInterface::RenderingInterfaces)
 	{
 		RenderingInterface->Draw(DeltaTime);
+		RenderingInterface->PostDraw(DeltaTime);
 	}
 
 	CD3DX12_RESOURCE_BARRIER ResourceBarrierCurr = CD3DX12_RESOURCE_BARRIER::Transition(
