@@ -129,6 +129,11 @@ void Mesh::BuildMesh(const FMeshRenderData* InRenderingData)
 
 void Mesh::Draw(float DeltaTime)
 {
+	ID3D12DescriptorHeap* DestriptorHeaps[] = {CBVHeap.Get()};
+	GetCommandList()->SetDescriptorHeaps(_countof(DestriptorHeaps), DestriptorHeaps);
+	GetCommandList()->SetGraphicsRootSignature(RootSignature.Get());
+	GetCommandList()->SetGraphicsRootDescriptorTable(0, CBVHeap->GetGPUDescriptorHandleForHeapStart());
+
 	auto VBV = GetVertexBufferView();
 	GetCommandList()->IASetVertexBuffers(0, 1, &VBV);
 	auto IBV = GetIndexBufferView();
