@@ -7,7 +7,7 @@
 #include "../../Mesh/Core/Mesh.h"
 #include "../../Mesh/BoxMesh.h"
 
-FWinEngine::FWinEngine() :
+CWinEngine::CWinEngine() :
 	CurrentFenceIdx(0),
 	CurrentSwapBufferIdx(0),
 	M4XQualityLevel(0),
@@ -21,11 +21,11 @@ FWinEngine::FWinEngine() :
 	}
 }
 
-FWinEngine::~FWinEngine()
+CWinEngine::~CWinEngine()
 {
 }
 
-int FWinEngine::PreInit()
+int CWinEngine::PreInit()
 {
 	const char LogPath[] = "../log";
 	init_log_system(LogPath);
@@ -33,7 +33,7 @@ int FWinEngine::PreInit()
 	return 1;
 }
 
-int FWinEngine::Init(FWinMainCommandParameters Parameters)
+int CWinEngine::Init(FWinMainCommandParameters Parameters)
 {
 	InitWindows(Parameters);
 
@@ -44,12 +44,12 @@ int FWinEngine::Init(FWinMainCommandParameters Parameters)
 	return 1;
 }
 
-int FWinEngine::PostInit()
+int CWinEngine::PostInit()
 {
 	ANALYSIS_HRESULT(CommandList->Reset(CommandAllocator.Get(), nullptr));
 
 	{
-		FBoxMesh* Box = FBoxMesh::CreateMesh();
+		CBoxMesh* Box = CBoxMesh::CreateMesh();
 	}
 
 	CommandList->Close();
@@ -61,7 +61,7 @@ int FWinEngine::PostInit()
 	return 1;
 }
 
-void FWinEngine::Tick(float DeltaTime)
+void CWinEngine::Tick(float DeltaTime)
 {
 	CommandAllocator->Reset();
 
@@ -128,22 +128,22 @@ void FWinEngine::Tick(float DeltaTime)
 	WaitGPUCommandQueueComplete();
 }
 
-int FWinEngine::PreExit()
+int CWinEngine::PreExit()
 {
 	return 1;
 }
 
-int FWinEngine::Exit()
+int CWinEngine::Exit()
 {
 	return 1;
 }
 
-int FWinEngine::PostExit()
+int CWinEngine::PostExit()
 {
 	return 1;
 }
 
-int FWinEngine::InitWindows(FWinMainCommandParameters Parameters)
+int CWinEngine::InitWindows(FWinMainCommandParameters Parameters)
 {
 	WNDCLASSEX WindowsClass;
 	WindowsClass.cbSize = sizeof(WNDCLASSEX);
@@ -189,7 +189,7 @@ int FWinEngine::InitWindows(FWinMainCommandParameters Parameters)
 	return 1;
 }
 
-int FWinEngine::InitDirectX3D()
+int CWinEngine::InitDirectX3D()
 {
 	ComPtr<ID3D12Debug> D3D12Debug;
 	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&D3D12Debug))))
@@ -305,7 +305,7 @@ int FWinEngine::InitDirectX3D()
 	return 1;
 }
 
-int FWinEngine::PostInitDirectX3D()
+int CWinEngine::PostInitDirectX3D()
 {
 	WaitGPUCommandQueueComplete();
 
@@ -403,12 +403,12 @@ int FWinEngine::PostInitDirectX3D()
 	return 1;
 }
 
-ID3D12Resource* FWinEngine::GetCurrentSwapBuffer() const
+ID3D12Resource* CWinEngine::GetCurrentSwapBuffer() const
 {
 	return SwapChainBuffer[CurrentSwapBufferIdx].Get();
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE FWinEngine::GetCurrentSwapBufferView() const
+D3D12_CPU_DESCRIPTOR_HANDLE CWinEngine::GetCurrentSwapBufferView() const
 {
 	return CD3DX12_CPU_DESCRIPTOR_HANDLE{
 		RTVHeap->GetCPUDescriptorHandleForHeapStart(),
@@ -417,22 +417,22 @@ D3D12_CPU_DESCRIPTOR_HANDLE FWinEngine::GetCurrentSwapBufferView() const
 	};
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE FWinEngine::GetCurrentDepthStencilView() const
+D3D12_CPU_DESCRIPTOR_HANDLE CWinEngine::GetCurrentDepthStencilView() const
 {
 	return DSVHeap->GetCPUDescriptorHandleForHeapStart();
 }
 
-UINT FWinEngine::GetDXGISampleCount() const
+UINT CWinEngine::GetDXGISampleCount() const
 {
 	return bMSAA4XEnabled ? 4 : 1;
 }
 
-UINT FWinEngine::GetDXGISampleQuality() const
+UINT CWinEngine::GetDXGISampleQuality() const
 {
 	return bMSAA4XEnabled ? (M4XQualityLevel - 1) : 0;
 }
 
-void FWinEngine::WaitGPUCommandQueueComplete()
+void CWinEngine::WaitGPUCommandQueueComplete()
 {
 	CurrentFenceIdx++;
 	ANALYSIS_HRESULT(CommandQueue->Signal(Fence.Get(), CurrentFenceIdx));

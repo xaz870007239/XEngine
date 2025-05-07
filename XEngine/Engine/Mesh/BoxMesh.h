@@ -2,15 +2,15 @@
 
 #include "Core/Mesh.h"
 
-class FBoxMesh : public Mesh 
+class CBoxMesh : public CMesh 
 {
 public:
 
-	typedef Mesh Super;
+	typedef CMesh Super;
 
 	virtual void Init() override;
 	virtual void BuildMesh(const FMeshRenderData* InRenderingData) override;
 	virtual void Draw(float DeltaTime) override;
 
-	static FBoxMesh* CreateMesh();
+	static CBoxMesh* CreateMesh();
 };

@@ -10,7 +10,7 @@
 class FRenderingInterface
 {
 public:
-	friend class FWinEngine;
+	friend class CWinEngine;
 
 	FRenderingInterface();
 	~FRenderingInterface();
@@ -28,7 +28,7 @@ public:
 	simple_c_guid GetGUID() const { return GUID; }
 
 #if defined(_WIN32)
-	FWinEngine* GetEngine() const;
+	CWinEngine* GetEngine() const;
 #else
 	FEngine* GetEngine() const { return Engine; }
 #endif

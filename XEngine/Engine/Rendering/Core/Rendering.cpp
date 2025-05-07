@@ -42,16 +42,16 @@ void FRenderingInterface::PostDraw(float DeltaTime)
 }
 
 #if defined(_WIN32)
-FWinEngine* FRenderingInterface::GetEngine() const
+CWinEngine* FRenderingInterface::GetEngine() const
 {
-	return dynamic_cast<FWinEngine*>(Engine);
+	return dynamic_cast<CWinEngine*>(Engine);
 }
 #else
 #endif
 
 ComPtr<ID3D12Device> FRenderingInterface::GetDevice() const
 {
-	if (const FWinEngine* WinEngine = GetEngine())
+	if (const CWinEngine* WinEngine = GetEngine())
 	{
 		return WinEngine->GetDevice();
 	}
@@ -61,7 +61,7 @@ ComPtr<ID3D12Device> FRenderingInterface::GetDevice() const
 
 ComPtr<ID3D12GraphicsCommandList> FRenderingInterface::GetCommandList() const
 {
-	if (FWinEngine* WinEngine = GetEngine())
+	if (CWinEngine* WinEngine = GetEngine())
 	{
 		return WinEngine->GetCommandList();
 	}
@@ -71,7 +71,7 @@ ComPtr<ID3D12GraphicsCommandList> FRenderingInterface::GetCommandList() const
 
 ComPtr<ID3D12CommandAllocator> FRenderingInterface::GetCommandAllocator() const
 {
-	if (FWinEngine* WinEngine = GetEngine())
+	if (CWinEngine* WinEngine = GetEngine())
 	{
 		return WinEngine->GetCommandAllocator();
 	}

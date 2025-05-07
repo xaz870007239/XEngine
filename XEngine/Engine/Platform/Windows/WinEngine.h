@@ -2,13 +2,14 @@
 
 #include "../../Core/Engine.h"
 #include "../../../Engine/EngineMinimal.h"
+#include "../../Core/CoreObject/CoreMinimalObject.h"
 
-class FWinEngine : public FEngine
+class CWinEngine : public CCoreMinimalObject , public FEngine
 {
 public:
 
-	FWinEngine();
-	~FWinEngine();
+	CWinEngine();
+	~CWinEngine();
 
 	// Inherited via FEngine
 	int PreInit() override;

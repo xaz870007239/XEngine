@@ -3,6 +3,7 @@
 #include "../../Rendering/Core/Rendering.h"
 #include "MeshType.h"
 #include "../../Shader/Core/Shader.h"
+#include "../../Core/CoreObject/CoreMinimalObject.h"
 
 struct FTransformation
 {
@@ -15,12 +16,12 @@ struct FTransformation
 	static XMFLOAT4X4 IdentityMatrix4x4();
 };
 
-class Mesh : public FRenderingInterface
+class CMesh : public CCoreMinimalObject , public FRenderingInterface
 {
 public:
 	
-	Mesh();
-	~Mesh();
+	CMesh();
+	~CMesh();
 
 	virtual void Init() override;
 	virtual void BuildMesh(const FMeshRenderData* InRenderingData);
@@ -28,7 +29,7 @@ public:
 	virtual void Draw(float DeltaTime) override;
 	virtual void PostDraw(float DeltaTime) override;
 
-	static Mesh* CreateMesh(const FMeshRenderData* InRenderingData);
+	static CMesh* CreateMesh(const FMeshRenderData* InRenderingData);
 
 	D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView() const;
 	D3D12_INDEX_BUFFER_VIEW GetIndexBufferView() const;
