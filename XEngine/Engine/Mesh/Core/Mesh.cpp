@@ -21,7 +21,7 @@ Mesh::~Mesh()
 
 void Mesh::Init()
 {
-	float AspectRatio = (float)FEngineRenderConfig::Get()->ScreenHeight / (float)FEngineRenderConfig::Get()->ScreenWidth;
+	float AspectRatio = (float)FEngineRenderConfig::Get()->ScreenWidth / (float)FEngineRenderConfig::Get()->ScreenHeight;
 	XMMATRIX Project = XMMatrixPerspectiveFovLH(
 		0.25f * 3.1415926535f,
 		AspectRatio,
