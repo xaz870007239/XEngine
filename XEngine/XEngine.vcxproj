@@ -188,6 +188,7 @@
     <ClCompile Include="Engine\EngineMain.cpp" />
     <ClCompile Include="Engine\Input\Input.cpp" />
     <ClCompile Include="Engine\Input\InputType.cpp" />
+    <ClCompile Include="Engine\Interface\DirextXDeviceInterface.cpp" />
     <ClCompile Include="Engine\Math\XMath.cpp" />
     <ClCompile Include="Engine\Mesh\BoxMesh.cpp" />
     <ClCompile Include="Engine\Mesh\Core\Mesh.cpp" />
@@ -276,6 +277,7 @@
     <ClInclude Include="Engine\EngineMinimal.h" />
     <ClInclude Include="Engine\Input\Input.h" />
     <ClInclude Include="Engine\Input\InputType.h" />
+    <ClInclude Include="Engine\Interface\DirextXDeviceInterface.h" />
     <ClInclude Include="Engine\Math\XMath.h" />
     <ClInclude Include="Engine\Mesh\BoxMesh.h" />
     <ClInclude Include="Engine\Mesh\Core\Mesh.h" />
