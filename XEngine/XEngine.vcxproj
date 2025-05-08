@@ -186,6 +186,7 @@
     <ClCompile Include="Engine\Core\World.cpp" />
     <ClCompile Include="Engine\EngineFactory.cpp" />
     <ClCompile Include="Engine\EngineMain.cpp" />
+    <ClCompile Include="Engine\Input\Input.cpp" />
     <ClCompile Include="Engine\Input\InputType.cpp" />
     <ClCompile Include="Engine\Math\XMath.cpp" />
     <ClCompile Include="Engine\Mesh\BoxMesh.cpp" />
@@ -273,6 +274,7 @@
     <ClInclude Include="Engine\EngineDebug\EngineLog\EngineLog.h" />
     <ClInclude Include="Engine\EngineFactory.h" />
     <ClInclude Include="Engine\EngineMinimal.h" />
+    <ClInclude Include="Engine\Input\Input.h" />
     <ClInclude Include="Engine\Input\InputType.h" />
     <ClInclude Include="Engine\Math\XMath.h" />
     <ClInclude Include="Engine\Mesh\BoxMesh.h" />
