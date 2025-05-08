@@ -11,7 +11,7 @@ public:
 	CInputComponent();
 	~CInputComponent();
 
-	virtual void Init() override;
+	virtual void GameInit() override;
 	virtual void Tick(float DeltaTime) override;
 
 	//CVARIABLE()

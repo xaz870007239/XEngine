@@ -1,6 +1,6 @@
 #include "EngineFactory.h"
 
-FEngine* FEngineFactory::CreateEngine()
+CEngine* FEngineFactory::CreateEngine()
 {
 #if defined(_WIN32) || defined(_WIN64)
 	return new CWinEngine{};

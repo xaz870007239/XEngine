@@ -23,7 +23,7 @@ public:
 	CMesh();
 	~CMesh();
 
-	virtual void Init() override;
+	virtual void GameInit() override;
 	virtual void BuildMesh(const FMeshRenderData* InRenderingData);
 	virtual void PreDraw(float DeltaTime) override;
 	virtual void Draw(float DeltaTime) override;

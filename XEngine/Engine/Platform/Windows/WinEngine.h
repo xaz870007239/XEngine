@@ -2,9 +2,8 @@
 
 #include "../../Core/Engine.h"
 #include "../../../Engine/EngineMinimal.h"
-#include "../../Core/CoreObject/CoreMinimalObject.h"
 
-class CWinEngine : public CCoreMinimalObject , public FEngine
+class CWinEngine : public CEngine
 {
 public:
 

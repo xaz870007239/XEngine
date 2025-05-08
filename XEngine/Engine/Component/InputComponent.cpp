@@ -8,7 +8,7 @@ CInputComponent::~CInputComponent()
 {
 }
 
-void CInputComponent::Init()
+void CInputComponent::GameInit()
 {
 }
 

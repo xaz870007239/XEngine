@@ -14,7 +14,7 @@ public:
 	CCamera();
 	~CCamera();
 
-	virtual void Init() override;
+	virtual void GameInit() override;
 	virtual void Tick(float DeltaTime) override;
 
 	FORCEINLINE CTransformComponent* GetTransformComponent() const { return TransformComponent; }

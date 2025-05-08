@@ -1,14 +1,18 @@
 #pragma once
 
+#include "GUIDInterface.h"
 #include "../../Platform/Windows/WindowsPlatform.h"
+#include "../../CodeReflection/CodeReflectionMacroTag.h"
 
-class CCoreMinimalObject
+extern vector<class CCoreMinimalObject*> GObjects;
+
+class CCoreMinimalObject : public IGUIDInterface
 {
 public:
 	CCoreMinimalObject();
-	~CCoreMinimalObject();
+	virtual ~CCoreMinimalObject();
 
-	virtual void Init() {}
+	virtual void GameInit() {}
 	virtual void Tick(float DeltaTime) {}
 
 	template<class T>
@@ -16,4 +20,10 @@ public:
 	{
 		return dynamic_cast<T*>(NewObject);
 	}
+
+	bool CanTick() const { return bCanTick; }
+
+protected:
+
+	bool bCanTick;
 };

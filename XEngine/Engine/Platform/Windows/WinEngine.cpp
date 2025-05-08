@@ -6,6 +6,7 @@
 #include "../../Rendering/Core/Rendering.h"
 #include "../../Mesh/Core/Mesh.h"
 #include "../../Mesh/BoxMesh.h"
+#include "../../Core/World.h"
 
 CWinEngine::CWinEngine() :
 	CurrentFenceIdx(0),
@@ -41,6 +42,8 @@ int CWinEngine::Init(FWinMainCommandParameters Parameters)
 
 	PostInitDirectX3D();
 
+	CWorld* World = CreateObject<CWorld>(new CWorld());
+
 	return 1;
 }
 
@@ -50,6 +53,10 @@ int CWinEngine::PostInit()
 
 	{
 		CBoxMesh* Box = CBoxMesh::CreateMesh();
+		for (auto& Object : GObjects)
+		{
+			Object->GameInit();
+		}
 	}
 
 	CommandList->Close();
@@ -63,6 +70,16 @@ int CWinEngine::PostInit()
 
 void CWinEngine::Tick(float DeltaTime)
 {
+	for (auto& Object : GObjects)
+	{
+		if (!Object->CanTick())
+		{
+			continue;
+		}
+
+		Object->Tick(DeltaTime);
+	}
+
 	CommandAllocator->Reset();
 
 	for (auto& RenderingInterface : FRenderingInterface::RenderingInterfaces)

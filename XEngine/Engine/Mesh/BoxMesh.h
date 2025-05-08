@@ -8,7 +8,7 @@ public:
 
 	typedef CMesh Super;
 
-	virtual void Init() override;
+	virtual void GameInit() override;
 	virtual void BuildMesh(const FMeshRenderData* InRenderingData) override;
 	virtual void Draw(float DeltaTime) override;
 

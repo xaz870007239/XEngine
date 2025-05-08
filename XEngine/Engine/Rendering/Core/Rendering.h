@@ -7,7 +7,7 @@
 #else
 #endif
 
-class FRenderingInterface
+class FRenderingInterface : public IGUIDInterface
 {
 public:
 	friend class CWinEngine;
@@ -19,13 +19,6 @@ public:
 	virtual void PreDraw(float DeltaTime);
 	virtual void Draw(float DeltaTime);
 	virtual void PostDraw(float DeltaTime);
-
-	bool operator==(const FRenderingInterface& Other)
-	{
-		return guid_equal(&Other.GUID, &GUID);
-	}
-
-	simple_c_guid GetGUID() const { return GUID; }
 
 #if defined(_WIN32)
 	CWinEngine* GetEngine() const;
@@ -40,7 +33,6 @@ public:
 
 protected:
 	static vector<FRenderingInterface*> RenderingInterfaces;
-	simple_c_guid GUID;
 };
 
 class FRenderingResourcesUpdate : public enable_shared_from_this<FRenderingResourcesUpdate>

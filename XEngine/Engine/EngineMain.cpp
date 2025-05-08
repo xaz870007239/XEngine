@@ -2,7 +2,7 @@
 #include "Core/Engine.h"
 #include "EngineFactory.h"
 
-int Init(FEngine* InEngine
+int Init(CEngine* InEngine
 #if defined(_WIN32) || defined(_WIN64)
 	, HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, int showCmd)
 #elif
@@ -44,7 +44,7 @@ int Init(FEngine* InEngine
 	return 0;
 }
 
-void Tick(FEngine* InEngine)
+void Tick(CEngine* InEngine)
 {
 	if (InEngine)
 	{
@@ -54,7 +54,7 @@ void Tick(FEngine* InEngine)
 	}
 }
 
-int Exit(FEngine* InEngine)
+int Exit(CEngine* InEngine)
 {
 	int Result = 0;
 	if (!InEngine)
@@ -83,7 +83,7 @@ int Exit(FEngine* InEngine)
 	return 0;
 }
 
-FEngine* Engine = nullptr;
+CEngine* Engine = nullptr;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, int showCmd)
 {

@@ -12,7 +12,7 @@ CCamera::~CCamera()
 {
 }
 
-void CCamera::Init()
+void CCamera::GameInit()
 {
 	InputComponent->KeyInputDelegate.Bind(this, &CCamera::ExecuteKeyboard);
 }

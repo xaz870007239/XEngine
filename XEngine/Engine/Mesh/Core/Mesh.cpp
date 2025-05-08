@@ -19,7 +19,7 @@ CMesh::~CMesh()
 {
 }
 
-void CMesh::Init()
+void CMesh::GameInit()
 {
 	float AspectRatio = (float)FEngineRenderConfig::Get()->ScreenWidth / (float)FEngineRenderConfig::Get()->ScreenHeight;
 	XMMATRIX Project = XMMatrixPerspectiveFovLH(

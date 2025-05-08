@@ -17,11 +17,10 @@
 #include <DirectXCollision.h>
 
 #include "Rendering/DirectX12/d3dx12.h"
-#include "Core/Engine.h"
 
 using namespace Microsoft::WRL;
 using namespace std;
 using namespace DirectX;
 using namespace DirectX::PackedVector;
 
-extern class FEngine* Engine;
+extern class CEngine* Engine;

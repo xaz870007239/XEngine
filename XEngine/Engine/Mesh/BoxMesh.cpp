@@ -1,8 +1,8 @@
 #include "BoxMesh.h"
 
-void CBoxMesh::Init()
+void CBoxMesh::GameInit()
 {
-	Super::Init();
+	Super::GameInit();
 }
 
 void CBoxMesh::BuildMesh(const FMeshRenderData* InRenderingData)
@@ -77,7 +77,7 @@ CBoxMesh* CBoxMesh::CreateMesh()
 
 	CBoxMesh* Result = new CBoxMesh();
 	Result->BuildMesh(&MeshRenderData);
-	Result->Init();
+	Result->GameInit();
 	return Result;
 }
  
