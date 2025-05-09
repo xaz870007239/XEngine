@@ -9,6 +9,7 @@ struct FVector
 
 	XMFLOAT3 VectorData;
 	XMFLOAT4 ColorData;
+	XMFLOAT3 NormalData;
 };
 
 struct FMeshRenderData

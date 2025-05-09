@@ -7,6 +7,7 @@
 #include "../../Mesh/Core/Mesh.h"
 #include "../../Mesh/BoxMesh.h"
 #include "../../Core/World.h"
+#include "../../Mesh/CustomMesh.h"
 
 CWinEngine::CWinEngine() :
 	CurrentFenceIdx(0),
@@ -52,7 +53,9 @@ int CWinEngine::PostInit()
 	ANALYSIS_HRESULT(CommandList->Reset(CommandAllocator.Get(), nullptr));
 
 	{
-		CBoxMesh* Box = CBoxMesh::CreateMesh();
+		//CBoxMesh* Box = CBoxMesh::CreateMesh();
+		string MeshObjPath = "../XEngine/Resource/old_book.obj";
+		CCustomMesh* Mesh = CCustomMesh::CreateMesh(MeshObjPath);
 		for (auto& Object : GObjects)
 		{
 			Object->GameInit();
