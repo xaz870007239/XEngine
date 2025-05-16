@@ -57,8 +57,8 @@ protected:
 
 	vector<D3D12_INPUT_ELEMENT_DESC> InputElemDesc;
 
-	int VertexSizeInBytes;
-	int IndexSizeInBytes;
+	uint16_t VertexSizeInBytes;
+	uint16_t IndexSizeInBytes;
 
 	DXGI_FORMAT Format;
 

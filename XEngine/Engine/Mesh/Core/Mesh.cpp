@@ -93,12 +93,13 @@ void CMesh::BuildMesh(const FMeshRenderData* InRenderingData)
 
 	InputElemDesc =
 	{
-		{"POSITION",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0},
-		{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+		{"POSITION",0,	DXGI_FORMAT_R32G32B32_FLOAT,	0,	0,	D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+		{"COLOR",	0,	DXGI_FORMAT_R32G32B32A32_FLOAT, 0,	12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+		{"NORMAL",	0,	DXGI_FORMAT_R32G32B32_FLOAT,	0,	28, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
 	};
 
-	VertexSizeInBytes = InRenderingData->VertexData.size() * sizeof(FVector);
-	IndexSizeInBytes = InRenderingData->IndexData.size() * sizeof(uint16_t);
+	VertexSizeInBytes = (uint16_t)InRenderingData->VertexData.size() * sizeof(FVector);
+	IndexSizeInBytes = (uint16_t)InRenderingData->IndexData.size() * sizeof(uint16_t);
 
 	ANALYSIS_HRESULT(D3DCreateBlob(VertexSizeInBytes, &CPUVertexBufferPtr));
 	memcpy(CPUVertexBufferPtr->GetBufferPointer(), InRenderingData->VertexData.data(), VertexSizeInBytes);
@@ -155,27 +156,28 @@ void CMesh::Draw(float DeltaTime)
 	GetCommandList()->IASetVertexBuffers(0, 1, &VBV);
 	auto IBV = GetIndexBufferView();
 	GetCommandList()->IASetIndexBuffer(&IBV);
-	//GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	GetCommandList()->DrawIndexedInstanced(IndexSizeInBytes / sizeof(uint16_t), 1, 0, 0, 0);
 }
 
 void CMesh::PostDraw(float DeltaTime)
 {
-	XMUINT3 MeshPost = XMUINT3(5.0f, 5.0f, 5.0f);
+	XMFLOAT3 MeshPos = XMFLOAT3(0.0f, 0.0f, 10.0f);
 
-	XMVECTOR Pos = XMVectorSet(MeshPost.x, MeshPost.y, MeshPost.z, 1.0f);
+	XMVECTOR Pos = XMVectorSet(MeshPos.x, MeshPos.y, MeshPos.z, 1.0f);
 	XMVECTOR ViewTarget = XMVectorZero();
 	XMVECTOR ViewUp = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
-	XMMATRIX ViewLookAt = XMMatrixLookAtLH(Pos, ViewTarget, ViewUp);
-	XMStoreFloat4x4(&ViewMatrix, ViewLookAt);
-
-	XMMATRIX AtrixWorld = XMLoadFloat4x4(&WorldMatrix);
 	XMMATRIX AtrixProject = XMLoadFloat4x4(&ProjectMatrix);
+	XMMATRIX ViewLookAt = XMMatrixLookAtLH(Pos, ViewTarget, ViewUp);
+	XMMATRIX AtrixWorld = XMLoadFloat4x4(&WorldMatrix);
 	XMMATRIX WVP = AtrixWorld * ViewLookAt * AtrixProject;
+
+	XMStoreFloat4x4(&ViewMatrix, ViewLookAt);
 
 	FTransformation ObjTransform;
 	XMStoreFloat4x4(&ObjTransform.WorldMatrix, XMMatrixTranspose(WVP));
+
 	ObjConstants->Update(0, &ObjTransform);
 }
 
@@ -191,7 +193,7 @@ D3D12_VERTEX_BUFFER_VIEW CMesh::GetVertexBufferView() const
 	D3D12_VERTEX_BUFFER_VIEW VertexBufferView;
 	VertexBufferView.BufferLocation = GPUVertexBufferPtr->GetGPUVirtualAddress();
 	VertexBufferView.StrideInBytes = sizeof(FVector);
-	VertexBufferView.SizeInBytes = sizeof(FVector) * VertexSizeInBytes;
+	VertexBufferView.SizeInBytes = VertexSizeInBytes;
 	return VertexBufferView;
 }
 
@@ -200,7 +202,7 @@ D3D12_INDEX_BUFFER_VIEW CMesh::GetIndexBufferView() const
 	D3D12_INDEX_BUFFER_VIEW IndexBufferView;
 	IndexBufferView.BufferLocation = GPUIndexBufferPtr->GetGPUVirtualAddress();
 	IndexBufferView.Format = DXGI_FORMAT_R16_UINT;
-	IndexBufferView.SizeInBytes = sizeof(uint16_t) * IndexSizeInBytes;
+	IndexBufferView.SizeInBytes = IndexSizeInBytes;
 	return IndexBufferView;
 }
 

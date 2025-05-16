@@ -53,9 +53,9 @@ int CWinEngine::PostInit()
 	ANALYSIS_HRESULT(CommandList->Reset(CommandAllocator.Get(), nullptr));
 
 	{
-		//CBoxMesh* Box = CBoxMesh::CreateMesh();
-		string MeshObjPath = "../XEngine/Resource/old_book.obj";
-		CCustomMesh* Mesh = CCustomMesh::CreateMesh(MeshObjPath);
+		CBoxMesh* Box = CBoxMesh::CreateMesh();
+		//string MeshObjPath = "../XEngine/Resource/old_book.obj";
+		//CCustomMesh* Mesh = CCustomMesh::CreateMesh(MeshObjPath);
 		for (auto& Object : GObjects)
 		{
 			Object->GameInit();
@@ -399,8 +399,11 @@ int CWinEngine::PostInitDirectX3D()
 		D3D12_RESOURCE_STATE_COMMON,
 		D3D12_RESOURCE_STATE_DEPTH_WRITE
 	); 
+
+	CommandAllocator->Reset();
+	CommandList->Reset(CommandAllocator.Get(), nullptr);
+
 	CommandList->ResourceBarrier(1, &Barrier);
-	//ANALYSIS_HRESULT(CommandList->Close());
 	CommandList->Close();
 
 	ID3D12CommandList* CommandLists[] = { CommandList.Get() };
